@@ -34,9 +34,9 @@ If you're new to Azure Backup service, see:
 - [Azure Backup documentation](https://docs.microsoft.com/azure/backup/)
 - [Azure Backup template reference](https://docs.microsoft.com/azure/templates/microsoft.recoveryservices/allversions)
 - [Quickstart templates](https://azure.microsoft.com/resources/templates/?resourceType=Microsoft.Recoveryservices&pageNumber=1&sort=Popular)
-  - [Create Recovery Services Vault](https://github.com/Azure/azure-quickstart-templates/tree/master/101-recovery-services-vault-create)
-  - [Create Recovery Services Vault and Weekly Backup Policy](https://github.com/Azure/azure-quickstart-templates/tree/master/101-recovery-services-weekly-backup-policy-create)
-  - [Create Recovery Services Vault and Daily Backup Policy](https://github.com/Azure/azure-quickstart-templates/tree/master/101-recovery-services-daily-backup-policy-create)
+  - [Create Recovery Services Vault](../recovery-services-vault-create)
+  - [Create Recovery Services Vault and Weekly Backup Policy](../recovery-services-weekly-backup-policy-create)
+  - [Create Recovery Services Vault and Daily Backup Policy](../recovery-services-daily-backup-policy-create)
 
 If you're new to the template development, see:
 
