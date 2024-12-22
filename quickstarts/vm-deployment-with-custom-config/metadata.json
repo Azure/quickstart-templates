@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/metadata.json#",
+    "itemDisplayName": "Virtual Machine Deployment with Custom Config",
+    "description": "Deploys a virtual machine with a custom configuration using Azure Bicep.",
+    "summary": "Deploy a virtual machine with custom configurations using Azure Bicep.",
+    "githubUsername": "YourGitHubUsername",
+    "docOwner": "YourGitHubUsername",
+    "dateUpdated": "2024-12-12",
+    "type": "QuickStart",
+    "validationType": "Manual"
+  }
+  
