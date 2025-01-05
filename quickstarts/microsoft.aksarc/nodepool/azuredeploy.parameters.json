@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "provisionedClusterName": {
+            "value": "GEN-UNIQUE"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "agentName": {
+            "value": "GEN-UNIQUE"
+        },
+        "agentVMSize": {
+            "value": "Standard_A4_v2"
+        },
+        "agentCount": {
+            "value": 3
+        },
+        "agentOsType": {
+            "value": "Linux"
+        }
+    }
+}
