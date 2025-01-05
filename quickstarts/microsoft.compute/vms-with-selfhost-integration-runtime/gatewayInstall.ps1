@@ -180,3 +180,45 @@ Install-Gateway $gwPath
 
 Register-Gateway $gatewayKey
 
+
+# Source https://stackoverflow.com/a/60380842
+#Download and silent install JDK
+
+#Working directory path
+Write-Host "Creating temp working directory..."
+$workd = "c:\temp"
+
+#Check if work directory exists if not create it
+If (!(Test-Path -Path $workd -PathType Container))
+{ 
+    New-Item -Path $workd  -ItemType directory 
+}
+
+#Download executable file
+Write-Host "Download JDK file to temp directory..."
+$source = "https://aka.ms/download-jdk/microsoft-jdk-11.0.19-windows-x64.msi"
+$destination = "$workd\jdk-windows-x64_bin.msi"
+$client = New-Object System.Net.WebClient
+$cookie = "oraclelicense=accept-securebackup-cookie"
+$client.Headers.Add([System.Net.HttpRequestHeader]::Cookie, $cookie)
+$client.DownloadFile($source, $destination)
+Write-Host "Download JDK file completed !"
+
+#Install silently
+Write-Host "Trying to install JDK silently..."
+Start-Process -FilePath "$workd\jdk-windows-x64_bin.msi" -ArgumentList /quiet -Wait
+Write-Host "JDK installation completed successfully !"
+
+#Remove the installer
+Write-Host "Trying to remove JDK file from temp directory..."
+rm -Force $workd\jdk*
+Write-Host "JDK file deleted successfully !"
+
+# Refresh path variable so java is in the path
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+Write-Host "Adding JAVA_HOME env var"
+$java_path = where.exe java
+$java_home = $java_path.TrimEnd("\bin\java.exe")
+setx /M JAVA_HOME $java_home
+Write-Host "Java Home location: " $Env:JAVA_HOME
