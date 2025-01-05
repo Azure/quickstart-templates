@@ -1,9 +1,10 @@
 ---
-description: This template demonstrates how to create a instance of Azure API Management with custom hostname for portal and multiple custom hostnames for proxy
+description: This template demonstrates how to create a instance of Azure API Management with custom hostname for portal and multiple custom hostnames for gateway
 page_type: sample
 products:
 - azure
 - azure-resource-manager
+- azure-api-management
 urlFragment: api-management-create-with-hostname
 languages:
 - json
