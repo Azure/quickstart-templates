@@ -28,7 +28,7 @@
       "metadata": {
         "description": "A script action folder holding the script."
       },
-      "defaultValue": "scripts"
+      "defaultValue": "hdinsight-linux-add-edge-node/scripts"
     },
     "installScriptAction": {
       "type": "string",
