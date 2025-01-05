@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "config": {
+      "basics": {
+        "description": "FinOps workbooks facilitate FinOps tasks that help you build, manage, and optimize cloud resources. [Learn more](https://aka.ms/finops/workbooks)",
+        "location": {
+          "label": "Location",
+          "resourceTypes": ["Microsoft.Insights/workbooks"]
+        }
+      }
+    },
+    "resourceTypes": ["Microsoft.Insights/workbooks"],
+    "basics": [
+      {
+        "name": "displayNamePrefix",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Name prefix",
+        "defaultValue": "FinOps",
+        "toolTip": "Prefix to use for each of the workbook names (e.g., 'FinOps-Optimization', 'FinOps-Governance').",
+        "constraints": {
+          "required": true,
+          "regex": "^.{1,220}$",
+          "validationMessage": "Name prefix cannot be longer than 220 characters."
+        },
+        "visible": true
+      }
+    ],
+    "steps": [
+      {
+        "name": "workbooks",
+        "label": "Workbooks",
+        "elements": [
+          {
+            "name": "workbookSelectionIntro",
+            "options": { "text": "Select the FinOps workbooks you would like to include in this deployment. You can select more later." },
+            "type": "Microsoft.Common.TextBlock"
+          },
+          {
+            "name": "includeOptimization",
+            "label": "Optimization",
+            "toolTip": "Select to include the optimization workbook for workload and rate optimization as well as sustainability, security, and more.",
+            "type": "Microsoft.Common.CheckBox",
+            "defaultValue": true
+          },
+          {
+            "name": "includeGovernance",
+            "label": "Governance",
+            "toolTip": "Select to include the governance workbook for queries to support the Well-Architected Framework governance pillar.",
+            "type": "Microsoft.Common.CheckBox",
+            "defaultValue": true
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "displayNamePrefix": "[basics('displayNamePrefix')]",
+      "includeOptimization": "[steps('workbooks').includeOptimization]",
+      "includeGovernance": "[steps('workbooks').includeGovernance]",
+      "location": "[location()]"
+    }
+  }
+}
