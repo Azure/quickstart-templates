@@ -5,5 +5,5 @@
   "description": "This template creates a redundant haproxy setup with 2 Ubuntu VMs configured behind Azure load balancer with floating IP enabled. Each of the Ubuntu VMs run haproxy to load balance requests to other application VMs (running Apache in this case). Keepalived enables redundancy for the haproxy VMs by assigning the floating IP to the MASTER and blocking the load-balancer probe on the BACKUP. This template also deploys a Storage Account, Virtual Network, Public IP address, Network Interfaces.",
   "summary": "Create a redundant haproxy setup with 2 Ubuntu VMs configured behind Azure load balancer with floating IP enabled.",
   "githubUsername": "sivaedupuganti",
-  "dateUpdated": "2023-04-25"
+  "dateUpdated": "2024-04-12"
 }
