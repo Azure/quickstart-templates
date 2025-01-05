@@ -1,0 +1,9 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Schedule automated SAP system start & stop ",
+  "description": "Deploy an ARM template to setup automation for start and stop of SAP systems and underlying VMs.",
+  "summary": "Custom deployment to Schedule automated SAP system start & stop",
+  "githubUsername": "devanshjainms",
+  "dateUpdated": "2023-09-30"
+}
