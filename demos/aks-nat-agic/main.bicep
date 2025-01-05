@@ -790,6 +790,14 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2022-05-01' = {
           natGateway: {
             id: natGateway.id
           }
+          delegations: [
+            {
+              name: 'Microsoft.ContainerService/managedClusters'
+              properties: {
+                serviceName: 'Microsoft.ContainerService/managedClusters'
+              }
+            }
+          ]
         }
       }
       {
