@@ -1,5 +1,5 @@
 ---
-description: This template will is to help support the new API versions of microsoft.insights/components.  Starting with 2020-02-02-preview WorkspaceID will be required when creating Application Inisghts.This template will deploy the App Service Plan, App Service, Application Insights, Log Analytics Workspace and hook it all together.
+description: This template will help support the new API versions of Microsoft.Insights/components.  Starting with 2020-02-02-preview WorkspaceID will be required when creating Application Inisghts.This template will deploy the App Service Plan, App Service, Application Insights, Log Analytics Workspace and hook it all together.
 page_type: sample
 products:
 - azure
