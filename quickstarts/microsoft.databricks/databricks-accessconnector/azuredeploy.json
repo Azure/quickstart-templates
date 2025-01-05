@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accessConnectorName": {
+      "type": "string",
+      "metadata": {
+        "description": "Specify the name of the Azure Databricks AccessConnector."
+      }
+    },
+    "managedIdentityName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the UserAssigned Managed Identity."
+      }
+    },
+     "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('managedIdentityName')]",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2018-11-30",
+      "location": "[parameters('location')]",
+      "properties": {}
+    },
+    {
+      "name": "[parameters('accessConnectorName')]",
+      "type": "Microsoft.Databricks/accessConnectors",
+      "apiVersion": "2022-10-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {},
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]": {}
+    }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "Accessconnectorname": {
+      "type": "string",
+      "value": "[parameters('accessConnectorName')]"
+    },
+    "AccessConnectorDetails": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Databricks/accessConnectors', parameters('accessConnectorName')),'2022-10-01-preview', 'Full')]"
+    }
+  }
+}
