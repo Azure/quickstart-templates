@@ -1,0 +1,203 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "provisionedClusterName": {
+          "type": "string",
+          "defaultValue": "aksarc-armcluster",
+          "metadata": {
+              "description": "The name of the AKS Arc Cluster resource."
+          }
+      },
+      "location": {
+          "type": "string",
+          "defaultValue": "eastus",
+          "metadata": {
+              "description": "The location of the AKS Arc Cluster resource."
+          }
+      },
+      "resourceTags": {
+            "type": "object",
+            "defaultValue": {}
+        },
+      "sshRSAPublicKey": {
+          "type": "string",
+          "metadata": {
+              "description": "Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH '"
+          }
+      },
+       "enableAHUB": {
+            "type": "string",
+            "defaultValue": "NotApplicable",
+            "metadata": {
+                "description": "Azure Hybrid Benefit for Windows Server licenses. NotApplicable, True, False."
+            }
+        },
+       "agentName": {
+              "type": "string",
+              "defaultValue": "nodepool",
+              "metadata": {
+                  "description": "The name of the node pool."
+              }
+          },
+        "agentVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A4_v2",
+            "metadata": {
+                  "description": "The VM size for node pools."
+            }
+        },
+        "agentCount": {
+              "type": "int",
+              "defaultValue": 1,
+              "minValue": 1,
+              "maxValue": 50,
+              "metadata": {
+                  "description": "The number of nodes for the cluster."
+              }
+          },
+          "agentOsType": {
+              "type": "string",
+              "defaultValue": "Linux",
+              "metadata": {
+                  "description": "The OS Type for the agent pool. Values are Linux and Windows."
+              }
+          },
+         "loadBalancerCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of load balancers."
+            }
+        },
+          "kubernetesVersion": {
+              "type": "string",
+              "metadata": {
+                  "description": "The version of Kubernetes."
+              }
+          },
+          "controlPlaneNodeCount": {
+              "type": "int",
+              "defaultValue": 1,
+              "minValue": 1,
+              "maxValue": 5,
+              "metadata": {
+                  "description": "The number of control plane nodes for the cluster."
+              }
+          },
+          "controlPlaneIp": {
+            "type": "string",
+            "defaultValue": "<default_value>",
+              "metadata": {
+                  "description": "Control plane IP address."
+              }
+         },
+          "controlPlaneVMSize": {
+              "type": "string",
+              "defaultValue": "Standard_A4_v2",
+              "metadata": {
+                  "description": "The VM size for control plane."
+              }
+          },
+          "vnetSubnetIds": {
+              "type": "array",
+              "metadata": {
+                  "description": "List of subnet Ids for the AKS cluster."
+              }
+          },
+          "podCidr": {
+            "type": "string",
+            "defaultValue": "10.244.0.0/16",
+            "metadata": {
+                  "description": "The VM size for control plane."
+              }
+          },
+          "networkPolicy": {
+            "type": "string",
+            "defaultValue": "calico",
+            "metadata": {
+                  "description": "Network policy to use for Kubernetes pods. Only options supported is calico."
+              }
+          },
+          "customLocation": {
+            "type": "string",
+            "metadata": {
+                  "description": "Fully qualified custom location ARM resource Id."
+              }
+          }
+      },
+      "resources": [
+      {
+          "apiVersion": "2023-11-01-preview",
+          "type": "Microsoft.Kubernetes/ConnectedClusters",
+          "kind": "ProvisionedCluster",
+          "location": "[parameters('location')]",
+          "name": "[parameters('provisionedClusterName')]",
+          "tags": "[parameters('resourceTags')]",
+          "identity": {
+              "type": "SystemAssigned"
+          },
+          "properties": {
+              "agentPublicKeyCertificate":"" ,
+              "aadProfile": {
+                  "enableAzureRBAC": false
+              }
+          }
+      },
+      {
+          "apiVersion": "2023-11-15-preview",
+          "type": "microsoft.hybridcontainerservice/provisionedclusterinstances",
+          "name": "default",
+          "scope": "[concat('Microsoft.Kubernetes/ConnectedClusters', '/', parameters('provisionedClusterName'))]",
+          "dependsOn": [
+              "[resourceId('Microsoft.Kubernetes/ConnectedClusters', parameters('provisionedClusterName'))]"
+          ],
+          "properties": {
+          "agentPoolProfiles": [
+            {
+              "count": "[parameters('agentCount')]",
+              "name":"[parameters('agentName')]",
+              "osType": "[parameters('agentOsType')]",
+              "vmSize": "[parameters('agentVMSize')]"
+            }
+          ],
+          "cloudProviderProfile": {
+            "infraNetworkProfile": {
+                  "vnetSubnetIds": "[parameters('vnetSubnetIds')]"
+            }
+          },
+          "controlPlane": {
+            "count": "[parameters('controlPlaneNodeCount')]",
+            "controlPlaneEndpoint": {
+                        "hostIP": "[parameters('controlPlaneIp')]"
+                    },
+            "vmSize": "[parameters('controlPlaneVMSize')]"
+          },
+         "licenseProfile": {
+            "azureHybridBenefit": "[parameters('enableAHUB')]"
+         },
+          "kubernetesVersion": "[parameters('kubernetesVersion')]",
+          "linuxProfile": {
+            "ssh": {
+              "publicKeys": [
+                {
+                  "keyData": "[parameters('sshRSAPublicKey')]"
+                }
+              ]
+            }
+          },
+        "networkProfile": {
+          "loadBalancerProfile": {
+            "count": "[parameters('loadBalancerCount')]"
+          },
+          "networkPolicy": "[parameters('networkPolicy')]",
+          "podCidr": "[parameters('podCidr')]"
+        }
+        }
+        // "extendedLocation": {
+        //     "name": "[parameters('customLocation')]",
+        //     "type": "CustomLocation"
+        // }
+      }
+    ]
+  }

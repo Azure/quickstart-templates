@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "provisionedClusterName": {
+            "value": "TODO: Add cluster name here."
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "resourceTags": {
+            "value": {}
+        },
+        "sshRSAPublicKey": {
+            "value": "TODO: Add your SSH RSA public key here." 
+        },
+        "enableAHUB": {
+            "value": "NotApplicable"
+        },
+        "agentName": {
+            "value": "nodepool"
+        },
+        "agentVMSize": {
+            "value": "Standard_A4_v2"
+        },
+        "agentCount": {
+            "value": 1
+        },
+        "agentOsType": {
+            "value": "Linux"
+        },
+        "loadBalancerCount": {
+            "value": 0
+        },
+        "kubernetesVersion": {
+            "value": "1.26.6"
+        },
+        "controlPlaneNodeCount": {
+            "value": 1
+        },
+        "controlPlaneIp": {
+            "value": "100.65.180.140"
+        },
+        "controlPlaneVMSize": {
+            "value": "Standard_D4s_v3"
+        },
+        "vnetSubnetIds": {
+            "value": [
+                "TODO: Add your subnet ARM ID here." 
+            ]
+        },
+        "podCidr": {
+            "value": "10.244.0.0/16"
+        },
+        "networkPolicy": {
+            "value": "calico"
+        },
+        "customLocation": {
+            "value": "TODO: Add your custom location ARM ID here." 
+        }
+    }
+}
