@@ -1,0 +1,9 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Deploy a Windows CVM, configured for Secure Key Release",
+  "summary": "Deploy a confidential Windows virtual machine that can perform the Secure Key Release operation on an Azure Key Vault Premium, HSM-backed, key.",
+  "description": "The secure key release (SKR) feature in Azure Key Vault Premium SKU and Managed-HSM is a way to control the release of keys to trusted execution environments (TEE), such as an Azure Confidential Virtual Machine, which is a special type of virtual machine designed for high-security scenarios. Key Vault's policy-based approach to releasing keys enforces verification of trusted execution environments, ensuring that only authorized and compliant virtual machines can access the keys.",
+  "githubUsername": "ThomVanL",
+  "dateUpdated": "2023-02-25"
+}
