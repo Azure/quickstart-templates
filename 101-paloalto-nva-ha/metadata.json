@@ -1,0 +1,17 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Palo Alto VM-Series in HA",
+  "description": "ARM template to create a Hub and Spoke Topology with Palo Alto VM-Series in High Availability on the Hub virtual network",
+  "summary": "ARM template to create a Hub and Spoke Topology with Palo Alto VM-Series in High Availability on the Hub virtual network",
+  "githubUsername": "cdanvergara",
+  "dateUpdated": "2023-05-09",
+  "icon": "blankTemplate",
+  "tags": {
+    "environments": "AzureCloud",
+    "languages": "json",
+    "resource": "Notification, Mobile, Web, App",
+    "level": "Intermediate",
+    "cost": "$"
+  }
+}
