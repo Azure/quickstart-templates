@@ -39,7 +39,7 @@
     },
     "dokkuVersion": {
       "type": "string",
-      "defaultValue": "0.28.4",
+      "defaultValue": "0.35.14",
       "metadata": {
         "description": "The Dokku version to launch"
       }
