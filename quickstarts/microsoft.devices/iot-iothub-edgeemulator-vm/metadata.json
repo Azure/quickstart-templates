@@ -19,7 +19,7 @@
     "cost": "$$",
     "scenario": "Azure IOT",
     "roles": "Security Engineer",
-    "learning": "https://docs.microsoft.com/learn/browse/?term=IOT&WT.mc_id=Portal-Microsoft_Azure_Education",
+    "learning": "https://learn.microsoft.com/training/browse/?term=IOT&WT.mc_id=portaledu_inproduct_template&terms=IOT",
     "isA4EActive": "true",
     "usefulLink": [
             {
