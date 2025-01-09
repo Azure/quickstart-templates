@@ -30,7 +30,9 @@ Resources for the hub, project, storage account, and AI Services will be created
 
 Optional use an existing AI Services resource by providing the full arm resource id in the parameters file:
 
-- aiServiceAccountResourceId
+- aiServiceAccountResourceId:/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{serviceName}
+
+If you want to use an existing Azure OpenAI resource, you will need to update the `aiServiceAccountResourceId` and the `aiServiceKind` parameter in the parameters file. The `aiServiceKind` parameter should be set to `AzureOpenAI`.
 
 ## Resources
 
@@ -41,4 +43,4 @@ Optional use an existing AI Services resource by providing the full arm resource
 | `Microsoft.MachineLearningServices/workspaces` | An Azure AI hub (Azure Machine Learning RP workspace of kind 'hub') |
 | `Microsoft.MachineLearningServices/workspaces` | An Azure AI project (Azure Machine Learning RP workspace of kind 'project') |
 | `Microsoft.CognitiveServices/accounts` | An Azure AI Services as the model-as-a-service endpoint provider (allowed kinds: 'AIServices' and 'OpenAI') |
-| `Microsoft.CognitiveServices/accounts/deployments` | A gpt-4o-mini model is deployed |`Tags: ``Tags: ``Tags: ``Tags: `
+| `Microsoft.CognitiveServices/accounts/deployments` | A gpt-4o-mini model is deployed |

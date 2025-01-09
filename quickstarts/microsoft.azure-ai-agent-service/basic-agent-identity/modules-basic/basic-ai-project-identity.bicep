@@ -38,6 +38,8 @@ resource aiProject 'Microsoft.MachineLearningServices/workspaces@2023-08-01-prev
     friendlyName: aiProjectFriendlyName
     description: aiProjectDescription
 
+    systemDatastoresAuthMode: 'identity'
+
     // dependent resources
     hubResourceId: aiHubId
   
