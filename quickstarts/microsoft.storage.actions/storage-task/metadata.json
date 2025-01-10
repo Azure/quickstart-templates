@@ -1,0 +1,9 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "Create a storage task",
+    "description": "This sample shows how to define the conditions of a storage task.",
+    "summary": "This template defines and creates a storage task",
+    "githubUsername": "normesta",
+    "dateUpdated": "2025-01-08"
+  }

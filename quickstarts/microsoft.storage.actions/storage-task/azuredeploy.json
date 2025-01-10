@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageTaskName": {
+            "type": "String",
+            "minLength": 3,
+            "maxLength": 24,
+            "metadata": {
+                "description": "The name of storage task."
+            }
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+            "metadata": {
+                "description": "The region in which to create the storage task."
+            }
+        },
+    "description": {
+            "defaultValue": "My ARM-generated storage task",
+            "type": "String",
+            "metadata": {
+                "description": "A description of the storage task."
+            }
+        },
+    "baseTime": {
+            "type": "string",
+            "defaultValue": "[utcNow()]",
+            "metadata": {
+                "description": "The current date and time. The storage task will run 10 minutes after this time."
+            }
+        } 
+    },
+      "variables": {
+        "lockedUntilDate": "[dateTimeAdd(parameters('baseTime'), 'P1D')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.StorageActions/storageTasks",
+            "apiVersion": "2023-01-01",
+            "name": "[parameters('storageTaskName')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "enabled": true,
+                "description": "[parameters('description')]",
+                "action": {
+                    "if": {
+                        "condition": "[[[endsWith(Name, '.docx')]]",
+                        "operations": [
+                            {
+                                "name": "SetBlobImmutabilityPolicy",
+                                "parameters": {
+                                    "untilDate": "[variables('lockedUntilDate')]",
+                                    "mode": "locked"
+                                },
+                                "onSuccess": "continue",
+                                "onFailure": "break"
+                            },
+                            {
+                                "name": "SetBlobTags",
+                                "parameters": {
+                                    "tagsetImmutabilityUpdatedBy": "StorageTaskQuickstart"
+                                },
+                                "onSuccess": "continue",
+                                "onFailure": "break"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+ }
