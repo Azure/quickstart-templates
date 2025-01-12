@@ -11,7 +11,7 @@ var virtualNetworkName = 'virtualNetwork1'
 var subnetName = 'subnet'
 var networkSecurityGroupName = 'networkSecurityGroup1'
 
-resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
+resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -34,7 +34,7 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2022-01-0
   }
 }
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
   name: virtualNetworkName
   location: location
   properties: {

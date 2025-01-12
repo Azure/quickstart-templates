@@ -6,9 +6,10 @@ products:
 - azure-resource-manager
 urlFragment: networkwatcher-flowLogs-create
 languages:
-- json
 - bicep
+- json
 ---
+
 # Enable NSG Flow Logs
 
 ![Azure Public Test Date](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.network/networkwatcher-flowLogs-create/PublicLastTestDate.svg)
