@@ -1,0 +1,10 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "Create an AKS ARC cluster",
+    "description": "This template creates an AKS ARC cluster with an assiciated control plane IP and Vnet",
+    "summary": "Create an AKS ARC cluster instance using a template",
+    "githubUsername": "ReddyVanshika",
+    "docOwner": "ReddyVanshika",
+    "dateUpdated": "2024-11-05"
+  }
