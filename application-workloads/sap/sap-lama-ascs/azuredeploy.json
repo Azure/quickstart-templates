@@ -22,14 +22,12 @@
         "osType": {
             "type": "string",
             "allowedValues": [
-                "Windows Server 2012 Datacenter",
-                "Windows Server 2012 R2 Datacenter",
-                "Windows Server 2016 Datacenter",
-                "SLES 12",
+                "Windows Server 2022 Datacenter",
+                "SLES 15",
                 "RHEL 7",
                 "Oracle Linux 7"
             ],
-            "defaultValue": "Windows Server 2016 Datacenter",
+            "defaultValue": "Windows Server 2022 Datacenter",
             "metadata": {
                 "description": "The type of the operating system you want to deploy."
             }
@@ -76,6 +74,13 @@
             "defaultValue": "",
             "metadata": {
                 "description": "The id of the subnet you want to use."
+            }
+        },
+        "privateIPAddress": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The private IP address that the new VM should use. Leave empty for dynamic."
             }
         },
         "deployEmptyTarget": {
@@ -181,30 +186,16 @@
     "variables": {
         "selectedZones":"[if(equals(parameters('availabilityZone'),0), json('null'), array(parameters('availabilityZone')))]",
         "images": {
-            "Windows Server 2012 Datacenter": {
-                "sku": "2012-Datacenter",
+           "Windows Server 2022 Datacenter": {
+                "sku": "2022-Datacenter",
                 "offer": "WindowsServer",
                 "publisher": "MicrosoftWindowsServer",
                 "OSType": "Windows",
                 "osDiskSize": 128
             },
-            "Windows Server 2012 R2 Datacenter": {
-                "sku": "2012-R2-Datacenter",
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "OSType": "Windows",
-                "osDiskSize": 128
-            },
-            "Windows Server 2016 Datacenter": {
-                "sku": "2016-Datacenter",
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "OSType": "Windows",
-                "osDiskSize": 128
-            },
-            "SLES 12": {
-                "sku": "12-SP3",
-                "offer": "SLES-SAP",
+            "SLES 15": {
+                "sku": "gen1",
+                "offer": "sles-sap-15-sp5",
                 "publisher": "SUSE",
                 "OSType": "Linux",
                 "osDiskSize": 128
@@ -242,7 +233,7 @@
                 "Name": "CustomScriptExtension",
                 "Version": "1.7",
                 "script": "[uri(parameters('_artifactsLocation'), concat('scripts/diskConfig.ps1', parameters('_artifactsLocationSasToken')))]",
-                "scriptCall": "powershell.exe -ExecutionPolicy bypass -File scripts/diskConfig.ps1",
+                "scriptCall": "powershell.exe -ExecutionPolicy bypass -File diskConfig.ps1",
                 "disks": [
                     {
                         "lun": 0,
@@ -338,7 +329,7 @@
             "false": "[parameters('subnetId')]"
         },
         "selectedSubnetId": "[variables('subnets')[string(equals(length(parameters('subnetId')), 0))]]",
-        "basicIPConfig": [
+        "basicIPConfigDynamic": [
             {
                 "name": "ipconfig-vm",
                 "properties": {
@@ -350,6 +341,20 @@
                 }
             }
         ],
+        "basicIPConfigStatic": [
+            {
+                "name": "ipconfig-vm",
+                "properties": {
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "[parameters('privateIPAddress')]",
+                    "subnet": {
+                        "id": "[variables('selectedSubnetId')]"
+                    },
+                    "primary": true
+                }
+            }
+        ],
+        "basicIPConfig": "[if(empty(parameters('privateIPAddress')), variables('basicIPConfigDynamic'), variables('basicIPConfigStatic'))]",
         "databaseIPConfig": {
             "Linux": [
                 {

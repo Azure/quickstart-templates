@@ -109,7 +109,7 @@
     "variables": {
         "commands": {
             "Linux": "[concat('groupadd -g ', parameters('sapsysGid') , ' sapsys; useradd -u ', parameters('sapadmId') , ' -g ', parameters('sapsysGid') , ' sapadm; ./', parameters('sapcarFilename'), ' -xvf ', parameters('sapHostAgentArchiveFilename'), ' -R hostagent; pushd hostagent; ./saphostexec -install; popd; /usr/sap/hostctrl/exe/sapacosprep -a InstallAcExt -m ', parameters('sapacExtArchiveFilename'), '; echo ''sapadm:', parameters('sapadmPassword'), ''' | chpasswd')]",
-            "Windows": "[concat('.\\', parameters('vcRedistFilename'), ' /q /norestart /log vcredistinstall.log & .\\', parameters('sapcarFilename'), ' -xvf ', parameters('sapHostAgentArchiveFilename'), ' -R hostagent & pushd hostagent & echo ', parameters('sapadmPassword') , '| .\\saphostexec.exe -install & popd & \"C:\\Program Files\\SAP\\hostctrl\\exe\\sapacosprep.exe\" -a InstallAcExt -m ', parameters('sapacExtArchiveFilename'), '')]"
+            "Windows": "[concat('.\\', parameters('vcRedistFilename'), ' /q /norestart /log vcredistinstall.log & .\\', parameters('sapcarFilename'), ' -xvf ', parameters('sapHostAgentArchiveFilename'), ' -R hostagent & pushd hostagent & echo ', parameters('sapadmPassword') , '| .\\saphostexec.exe -install & popd & \"C:\\Program Files\\SAP\\hostctrl\\exe\\sapacosprep.exe\" -a InstallAcExt -m .\\', parameters('sapacExtArchiveFilename'), '')]"
         },
         "files": {
             "Linux": [
