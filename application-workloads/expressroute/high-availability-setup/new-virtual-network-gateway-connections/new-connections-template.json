@@ -1,0 +1,86 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "location": {
+          "type": "string"
+      },
+      "virtualNetworkGatewayId1": {
+          "type": "string"
+      },
+      "connectionName1": {
+          "type": "string"
+      },
+      "routingWeight1": {
+          "type": "int"
+      },
+      "expressRouteGatewayBypass1": {
+          "type": "bool"
+      },
+      "expressRouteId1": {
+          "type": "string"
+      },
+      "connection1Tags": {
+        "type": "object",
+        "defaultValue": {}
+      },
+      "connectionName2": {
+          "type": "string"
+      },
+      "routingWeight2": {
+          "type": "int"
+      },
+      "expressRouteGatewayBypass2": {
+          "type": "bool"
+      },
+      "expressRouteId2": {
+          "type": "string"
+      },
+      "connection2Tags": {
+        "type": "object",
+        "defaultValue": {}
+      }
+  },
+  "resources": [
+      {
+          "name": "[parameters('connectionName1')]",
+          "type": "Microsoft.Network/connections",
+          "apiVersion": "2023-09-01",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('connection1Tags')]",
+          "dependsOn": [],
+          "properties": {
+              "connectionType": "ExpressRoute",
+              "virtualNetworkGateway1": {
+                  "id": "[parameters('virtualNetworkGatewayId1')]"
+              },
+              "routingWeight": "[parameters('routingWeight1')]",
+              "expressRouteGatewayBypass": "[parameters('expressRouteGatewayBypass1')]",
+              "peer": {
+                  "id": "[parameters('expressRouteId1')]"
+              }
+          }
+      },
+      {
+          "name": "[parameters('connectionName2')]",
+          "type": "Microsoft.Network/connections",
+          "apiVersion": "2023-09-01",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('connection2Tags')]",
+          "dependsOn": [
+              "[resourceId('Microsoft.Network/connections', parameters('connectionName1'))]"
+          ],
+          "properties": {
+              "connectionType": "ExpressRoute",
+              "virtualNetworkGateway1": {
+                  "id": "[parameters('virtualNetworkGatewayId1')]"
+              },
+              "routingWeight": "[parameters('routingWeight2')]",
+              "expressRouteGatewayBypass": "[parameters('expressRouteGatewayBypass2')]",
+              "peer": {
+                  "id": "[parameters('expressRouteId2')]"
+              }
+          }
+      }
+  ]
+}
