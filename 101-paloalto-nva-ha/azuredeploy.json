@@ -1,0 +1,299 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+            "description": "Location for all resources."
+        }
+    },
+    "existingLocation": {
+        "type": "string"
+        }
+  },
+  "variables": {
+    "hubVnetName": "HubVNET",
+    "hubVnetPrefix": "10.4.0.0/16",
+    "dmzSubnetName": "Untrust",
+    "dmzSubnetPrefix": "10.4.251.0/28",
+    "mgmtSubnetName": "Management",
+    "mgmtSubnetPrefix": "10.4.255.0/28",
+    "sharedSubnetName": "Trust",
+    "sharedSubnetPrefix": "10.4.254.0/25",
+    "devSpokeVnetName": "spokeDevVnet",
+    "devSpokeVnetPrefix": "10.10.0.0/16",
+    "prodSpokeVnetName": "spokeProdVnet",
+    "prodSpokeVnetPrefix": "10.100.0.0/16"
+  },
+  "resources": [
+    {
+      "comments": "HUB Virtual Network (VNet)",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('hubVnetName')]",
+      "apiVersion": "2022-07-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('hubVnetPrefix')]"
+          ]
+        },
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "comments": "Management Subnet",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(variables('hubVnetName'), '/', variables('mgmtSubnetName'))]",
+      "apiVersion": "2022-07-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('mgmtSubnetPrefix')]"
+      }
+    },
+    {
+      "comments": "Shared Subnet",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(variables('hubVnetName'), '/', variables('sharedSubnetName'))]",
+      "apiVersion": "2022-07-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('hubVnetName'), variables('mgmtSubnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('sharedSubnetPrefix')]"
+      }
+    },
+    {
+      "comments": "DMZ Subnet",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(variables('hubVnetName'), '/', variables('dmzSubnetName'))]",
+      "apiVersion": "2022-07-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('hubVnetName'), variables('mgmtSubnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('hubVnetName'), variables('sharedSubnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('dmzSubnetPrefix')]"
+      }
+    },
+    {
+      "comments": "Development Spoke Virtual Network (VNet)",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('devSpokeVnetName')]",
+      "apiVersion": "2022-07-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('devSpokeVnetPrefix')]"
+          ]
+        },
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "comments": "Production Spoke Virtual Network (VNet)",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('prodSpokeVnetName')]",
+      "apiVersion": "2022-07-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('prodSpokeVnetPrefix')]"
+          ]
+        },
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', variables('hubVnetName'), format('{0}-{1}', variables('hubVnetName'), variables('prodSpokeVnetName')))]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": false,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('prodSpokeVnetName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('prodSpokeVnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', variables('hubVnetName'), format('{0}-{1}', variables('hubVnetName'), variables('devSpokeVnetName')))]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": false,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('devSpokeVnetName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('devSpokeVnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', variables('prodSpokeVnetName'), format('{0}-{1}', variables('prodSpokeVnetName'), variables('hubVnetName')))]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": false,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('prodSpokeVnetName'))]"
+      ]
+    },
+       {
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', variables('devSpokeVnetName'), format('{0}-{1}', variables('devSpokeVnetName'), variables('hubVnetName')))]",
+      "properties": {
+        "allowVirtualNetworkAccess": true,
+        "allowForwardedTraffic": false,
+        "allowGatewayTransit": false,
+        "useRemoteGateways": false,
+        "remoteVirtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('devSpokeVnetName'))]"
+      ]
+    },
+    {
+        "name": "HubVnet",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]"
+        ],
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "https://raw.githubusercontent.com/cdanvergara/azure-quickstart-templates/paloalto/101-paloalto-nva-ha/nestedtemplates/pa.deploy.json",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "VNetName": {
+                    "value": "[variables('hubVnetName')]"
+                },
+                "vmSize": {
+                    "allowedValues": [
+                        "Standard_DS3_v2",
+                        "Standard_DS4_v2",
+                        "Standard_DS5_v2"
+                    ],
+                    "value": "Standard_DS3_v2",
+                    "metadata": {
+                        "description": "Azure VM size for VM-Series"
+                    }
+                },
+                "PAVersion": {
+                    "allowedValues": [
+                        "7.1.1",
+                        "8.0.0",
+                        "8.1.15",
+                        "9.0.1",
+                        "9.1.0",
+                        "latest"
+                    ],
+                    "value": "latest",
+                    "metadata": {
+                        "description": "Version of PanOS to use."
+                    }
+                },
+                "PACount": {
+                    "minValue": 1,
+                    "maxValue": 16,
+                    "value": 2,
+                    "metadata": {
+                        "description": "Number of virtual Palo Alto appliances you wish to deploy."
+                    }
+                },
+                "VNetRG": {
+                    "value": "[resourceGroup().name]",
+                    "metadata": {
+                        "description": "The name of the resource group your virtual network is in."
+                    }
+                },
+                "existingLocation": {
+                    "value": "[resourceGroup().location]"
+                },
+                "envPrefix": {
+                    "value": "Contoso-FW"
+                },
+                "manPrivateIPPrefix": {
+                    "value": "10.4.255."
+                },
+                "manPrivateIPFirst": {
+                    "value": 4
+                },
+                "trustPrivateIPPrefix": {
+                    "value": "10.4.254."
+                },
+                "trustPrivateIPFirst": {
+                    "value": 4
+                },
+                "untrustPrivateIPPrefix": {
+                    "value": "10.4.251."
+                },
+                "untrustPrivateIPFirst": {
+                    "value": 4
+                },
+                "managementSubnetName": {
+                    "value": "Management"
+                },
+                "trustSubnetName": {
+                    "value": "Trust"
+                },
+                "untrustSubnetName": {
+                    "value": "Untrust"
+                },
+                "Username": {
+                    "value": "paadmin",
+                    "metadata": {
+                        "description": "The name of the pivileged account that should be used to ssh and login to the PanOS web portal."
+                    }
+                },
+                "Password": {
+                    "maxLength": 31,
+                    "value": "GEN-PASSWORD",
+                    "metadata": {
+                        "description": "Password to the privileged account used to ssh and login to the PanOS web portal."
+                    }
+                }
+
+            }
+        }
+    }
+  ],
+  "outputs": {
+  }
+}
