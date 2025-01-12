@@ -94,7 +94,7 @@ Click on the **Deploy to Azure** button below. This will open the Azure Portal (
 Access to Azure
 ## Versioning
 
-We use [Github](https://github.com/) for version control.
+We use [GitHub](https://github.com/) for version control.
 
 ## Authors
 
