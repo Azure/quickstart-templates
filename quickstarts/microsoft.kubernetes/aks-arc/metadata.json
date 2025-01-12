@@ -1,0 +1,11 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "Azure Kubernetes Service (AKS), enabled by Azure Arc",
+    "description": "Deploy a Kubernetes cluster with Azure Kubernetes Service (AKS), enabled by Azure Arc",
+    "summary": "Deploy a Kubernetes cluster with Linux node pools using AKS Arc",
+    "githubUsername": "rbaziwane",
+    "docOwner": "sethM",
+    "dateUpdated": "2024-01-08"
+  }
+  

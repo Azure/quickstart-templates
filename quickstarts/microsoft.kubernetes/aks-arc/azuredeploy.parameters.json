@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "provisionedClusterName": {
+            "value": "GEN-UNIQUE"
+        },
+        "location": {
+            "value": "" 
+        },
+        "customLocation": {
+            "value": ""
+        },
+        "resourceTags": {
+            "value": {}
+        },
+        "enableAHUB": {
+            "value": "" 
+        },
+        "sshRSAPublicKey": {
+            "value": "GEN-SSH-PUB-KEY"
+        },
+        "controlPlaneNodeCount": {
+            "value": 1 
+        },
+        "controlPlaneVMSize": {
+            "value": "" 
+        },
+        "controlPlaneOsType": {
+            "value": "Linux" 
+        },
+        "controlPlaneIp": {
+            "value": "" 
+        },
+        "kubernetesVersion": {
+            "value": "" 
+        },
+        "agentName": {
+            "value": ""
+        },
+        "agentVMSize": {
+            "value": "" 
+        },
+        "agentCount": {
+            "value": 1
+        },
+        "agentOsType": {
+            "value": "Linux"
+        },
+        "loadBalancerCount": {
+            "value": 0
+        },
+        "vnetSubnetIds": {
+            "value": [
+            ]
+        },
+        "podCidr": {
+            "value": ""
+        },
+        "networkPolicy": {
+           "value": "calico"
+        }
+    }
+}
