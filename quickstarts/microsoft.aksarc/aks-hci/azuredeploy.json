@@ -1,0 +1,158 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "aksClusterName": {
+      "type": "string"
+    },
+    "aksAdminGroupObjectId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "aksControlPlaneIP": {
+      "type": "string"
+    },
+    "aksControlPlaneNodeCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 5
+    },
+    "aksControlPlaneNodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_A4_v2"
+    },
+    "aksPodCidr": {
+      "type": "string",
+      "defaultValue": "10.244.0.0/16"
+    },
+    "aksKubernetesVersion": {
+      "type": "string",
+      "defaultValue": "v1.26.6"
+    },
+    "aksNodePoolName": {
+      "type": "string"
+    },
+    "aksNodePoolNodeCount": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "aksNodePoolNodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_A4_v2"
+    },
+    "aksNodePoolOSType": {
+      "type": "string",
+      "defaultValue": "Linux",
+      "allowedValues": ["Linux", "Windows"]
+    },
+    "sshPublicKey": {
+      "type": "string"
+    },
+    "hciLogicalNetworkName": {
+      "type": "string"
+    },
+    "hciCustomLocationName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "customLocationId": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('hciCustomLocationName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2018-11-30",
+      "name": "aksManagedIdentity",
+      "location": "[parameters('location')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Kubernetes/connectedClusters",
+      "apiVersion": "2024-01-01",
+      "name": "[parameters('aksClusterName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "kind": "ProvisionedCluster",
+      "properties": {
+        "agentPublicKeyCertificate": "",
+        "aadProfile": {
+          "enableAzureRBAC": false,
+          "adminGroupObjectIDs": ["[parameters('aksAdminGroupObjectId')]"]
+        },
+        "securityProfile": {
+          "workloadIdentity": {
+            "enabled": true
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.HybridContainerService/provisionedClusterInstances",
+      "apiVersion": "2024-01-01",
+      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('aksClusterName'))]",
+      "name": "default",
+      "extendedLocation": {
+        "type": "CustomLocation",
+        "name": "[variables('customLocationId')]"
+      },
+      "properties": {
+        "linuxProfile": {
+          "ssh": {
+            "publicKeys": [
+              {
+                "keyData": "[parameters('sshPublicKey')]"
+              }
+            ]
+          }
+        },
+        "controlPlane": {
+          "count": "[parameters('aksControlPlaneNodeCount')]",
+          "controlPlaneEndpoint": {
+            "hostIP": "[parameters('aksControlPlaneIP')]"
+          },
+          "vmSize": "[parameters('aksControlPlaneNodeSize')]"
+        },
+        "kubernetesVersion": "[parameters('aksKubernetesVersion')]",
+        "networkProfile": {
+          "loadBalancerProfile": {
+            "count": 0
+          },
+          "networkPolicy": "calico",
+          "podCidr": "[parameters('aksPodCidr')]"
+        },
+        "agentPoolProfiles": [
+          {
+            "name": "[parameters('aksNodePoolName')]",
+            "count": "[parameters('aksNodePoolNodeCount')]",
+            "vmSize": "[parameters('aksNodePoolNodeSize')]",
+            "osType": "[parameters('aksNodePoolOSType')]"
+          }
+        ],
+        "cloudProviderProfile": {
+          "infraNetworkProfile": {
+            "vnetSubnetIds": [
+              "[resourceId('Microsoft.AzureStackHCI/logicalNetworks', parameters('hciLogicalNetworkName'))]"
+            ]
+          }
+        },
+        "storageProfile": {
+          "nfsCsiDriver": {
+            "enabled": false
+          },
+          "smbCsiDriver": {
+            "enabled": false
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('aksClusterName'))]"
+      ]
+    }
+  ]
+}

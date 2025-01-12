@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "eastus"
+    },
+    "aksClusterName": {
+      "value": "GEN-UNIQUE"
+    },
+    "aksAdminGroupObjectId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    "aksControlPlaneIP": {
+      "value": "x.x.x.x"
+    },
+    "aksControlPlaneNodeCount": {
+      "value": 1
+    },
+    "aksControlPlaneNodeSize": {
+      "value": "Standard_A4_v2"
+    },
+    "aksPodCidr": {
+      "value": "10.244.0.0/16"
+    },
+    "aksKubernetesVersion": {
+      "value": "v1.26.6"
+    },
+    "aksNodePoolName": {
+      "value": "GEN-UNIQUE"
+    },
+    "aksNodePoolNodeCount": {
+      "value": 1
+    },
+    "aksNodePoolNodeSize": {
+      "value": "Standard_A4_v2"
+    },
+    "aksNodePoolOSType": {
+      "value": "Linux"
+    },
+    "sshPublicKey": {
+      "value": "ssh-rsa AAAAB3...=="
+    },
+    "hciLogicalNetworkName": {
+      "value": "GEN-UNIQUE"
+    },
+    "hciCustomLocationName": {
+      "value": "GEN_UNIQUE"
+    }
+  }
+}
