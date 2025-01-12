@@ -46,12 +46,12 @@ Assuming your domainName parameter was "kafkajumpbox" and region was "West US"
 
 The following table outlines the deployment topology characteristics for each supported t-shirt size:
 
-| T-Shirt Size | Database VM Size | CPU Cores | Memory | Data Disks | # of Brokers | # of Zookeepers | # of Storage Accounts |
-|:--- |:---|:---|:---|:---|:---|:---|:---|:---|
-| Small | Standard_A1 | 1 | 1.75 GB | 2x1023 GB | 3 | 1 | 1
-| Medium | Standard_A3 | 4 | 7 GB | 8x1023 GB | 5 | 3 | 2
-| Large | Standard_A4 | 8 | 14 GB | 16x1023 GB | 5 | 3 | 3
-| XLarge | Standard_A7 | 8 | 56 GB | 16x1023 GB | 8 | 5 | 4
+ |T-Shirt Size|Database VM Size|CPU Cores|Memory| Data Disks|# of Brokers|# of Zookeepers|# of Storage Accounts|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+ |Small | Standard_A1 | 1 | 1.75 GB | 2x1023 GB | 3 | 1 | 1
+ |Medium | Standard_A3 | 4 | 7 GB | 8x1023 GB | 5 | 3 | 2
+ |Large | Standard_A4 | 8 | 14 GB | 16x1023 GB | 5 | 3 | 3
+ |XLarge | Standard_A7 | 8 | 56 GB | 16x1023 GB | 8 | 5 | 4
 
 How to Run the scripts
 ----------------------
