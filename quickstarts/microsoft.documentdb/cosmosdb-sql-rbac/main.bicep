@@ -42,7 +42,7 @@ resource databaseAccount 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
 }
 
 resource sqlRoleDefinition 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2021-04-15' = {
-  name: '${databaseAccount.name}/${roleDefinitionId}'
+  name: '${databaseAccount.name}-${roleDefinitionId}'
   properties: {
     roleName: roleDefinitionName
     type: 'CustomRole'
@@ -58,7 +58,7 @@ resource sqlRoleDefinition 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinit
 }
 
 resource sqlRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2021-04-15' = {
-  name: '${databaseAccount.name}/${roleAssignmentId}'
+  name: '${databaseAccount.name}-${roleAssignmentId}'
   properties: {
     roleDefinitionId: sqlRoleDefinition.id
     principalId: principalId
