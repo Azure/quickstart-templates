@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentName": {
+            "value": "GEN-UNIQUE"
+        },
+        "vmName": {
+            "value": "GET-PREREQ-vmName"
+        },
+        "maintenanceConfigurationName": {
+            "value": "GET-PREREQ-maintenanceConfigurationName"
+        }
+    }
+}
