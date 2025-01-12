@@ -1,0 +1,15 @@
+#cloud-config
+package_upgrade: true
+packages:
+  - build-essential
+  - cmake
+  - git
+  - libcurl4-openssl-dev
+  - libjsoncpp-dev
+  - libboost-all-dev
+  - nlohmann-json3-dev
+  - unzip
+runcmd:
+  - git clone https://github.com/Azure/confidential-computing-cvm-guest-attestation.git
+  - wget https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.2_amd64.deb --directory-prefix=/opt
+  - dpkg -i /opt/azguestattestation1_1.0.2_amd64.deb
