@@ -11,7 +11,7 @@
         },
         "VmSize": {
             "type": "string",
-            "defaultValue": "Standard_D2_v3",
+            "defaultValue": "Standard_D2s_v3",
             "metadata": {
                 "description": "The size of the VM"
             }
@@ -27,6 +27,17 @@
             "metadata": {
                 "description": "Password for the Virtual Machine. The password must be at least 12 characters long and have lower case, upper characters, digit and a special character (Regex match)"
             }
+        },
+        "securityType": {
+          "type": "string",
+          "defaultValue": "TrustedLaunch",
+          "allowedValues": [
+            "Standard",
+            "TrustedLaunch"
+          ],
+          "metadata": {
+            "description": "Security Type of the Virtual Machine."
+          }
         },
         "location": {
             "type": "string",
@@ -77,6 +88,17 @@
         }
     },
     "variables": {
+        "securityProfileJson": {
+          "uefiSettings": {
+            "secureBootEnabled": true,
+            "vTpmEnabled": true
+          },
+          "securityType": "[parameters('securityType')]"
+        },
+        "extensionName": "GuestAttestation",
+        "extensionPublisher": "Microsoft.Azure.Security.WindowsAttestation",
+        "extensionVersion": "1.0",
+        "maaTenantName": "GuestAttestation",
         "publicIpAddressName": "[concat(parameters('vmName'), 'PublicIP' )]",
         "networkInterfaceName": "[concat(parameters('vmName'),'NetInt')]",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
@@ -88,7 +110,7 @@
         {
             "name": "[variables('networkInterfaceName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2022-07-01",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
@@ -119,7 +141,7 @@
             "condition": "[equals(parameters('sharedResources'), 'new')]",
             "name": "[parameters('networkSecurityGroupName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2022-07-01",
             "location": "[parameters('location')]",
             "properties": {
                 "securityRules": [
@@ -142,7 +164,7 @@
         {
             "condition": "[equals(parameters('sharedResources'), 'new')]",
             "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2022-07-01",
             "name": "[parameters('virtualNetworkName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -167,7 +189,7 @@
         },
         {
             "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2022-07-01",
             "name": "[variables('publicIpAddressName')]",
             "location": "[parameters('location')]",
             "properties": {
@@ -186,7 +208,7 @@
         {
             "name": "[parameters('vmName')]",
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2019-12-01",
+            "apiVersion": "2022-11-01",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -203,12 +225,13 @@
                         }
                     },
                     "imageReference": {
-                        "publisher": "MicrosoftVisualStudio",
-                        "offer": "visualstudio2019latest",
-                        "sku": "vs-2019-comm-latest-ws2019",
+                        "publisher": "MicrosoftVisualStudio",                        
+                        "offer": "visualstudioplustools",
+                        "sku": "vs-2022-pro-general-win11-m365-gen2",
                         "version": "latest"
                     }
                 },
+                "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), null())]",
                 "networkProfile": {
                     "networkInterfaces": [
                         {
@@ -226,7 +249,38 @@
                     }
                 }
             }
-        }
+        },
+        {
+            "condition": "[and(equals(parameters('securityType'), 'TrustedLaunch'), and(equals(variables('securityProfileJson').uefiSettings.secureBootEnabled, true()), equals(variables('securityProfileJson').uefiSettings.vTpmEnabled, true())))]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2022-11-01",
+            "name": "[format('{0}/GuestAttestation', parameters('vmName'))]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publisher": "[variables('extensionPublisher')]",
+                "type": "[variables('extensionName')]",
+                "typeHandlerVersion": "[variables('extensionVersion')]",
+                "autoUpgradeMinorVersion": true,
+                "enableAutomaticUpgrade": true,
+                "settings": {
+                    "AttestationConfig": {
+                        "MaaSettings": {
+                            "maaEndpoint": "",
+                            "maaTenantName": "[variables('maaTenantName')]"
+                        },
+                        "AscSettings": {
+                          "ascReportingEndpoint": "",
+                          "ascReportingFrequency": ""
+                        },
+                        "useCustomToken": "false",
+                        "disableAlerts": "false"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+            ]
+        }    
     ],
     "outputs": {
         "adminUsername": {
@@ -247,4 +301,3 @@
         }
     }
 }
-
