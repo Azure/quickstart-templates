@@ -5,5 +5,5 @@
   "description": "Creates a function app with managed service identity enabled with Application Insights set up for logs and metrics.",
   "summary": "Creates a function app with managed service identity.",
   "githubUsername": "eamonoreilly",
-  "dateUpdated": "2024-02-28"
+  "dateUpdated": "2024-04-10"
 }
