@@ -6,8 +6,8 @@ products:
 - azure-resource-manager
 urlFragment: hdinsight-hbase-linux
 languages:
-- json
 - bicep
+- json
 ---
 # Deploy a Linux-based HBase cluster in HDInsight
 
