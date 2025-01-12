@@ -1896,7 +1896,7 @@
                               "id": "68a77162-06c2-4648-83e0-f8f41c4fbda7",
                               "cellValue": "SelectedSubTab",
                               "linkTarget": "parameter",
-                              "linkLabel": "Express Route",
+                              "linkLabel": "ExpressRoute",
                               "subTarget": "ER",
                               "style": "link"
                             },
@@ -2775,7 +2775,7 @@
                                       "json": "# Recommendations for NAT Gateways\r\nReview idle NAT Gateways that have no subnet defined, as they may represent additional cost.\r\n",
                                       "style": "upsell"
                                     },
-                                    "name": "Recommendations for idle virtualNetworkGateways"
+                                    "name": "Recommendations for idle NAT Gateway"
                                   },
                                   {
                                     "type": 3,
@@ -3318,10 +3318,10 @@
                                   {
                                     "type": 1,
                                     "content": {
-                                      "json": "# Recommendations for Express Route\r\n\r\n## Express Route Gateways without a completed circuit (ISP has not completed the connection)\r\nThis table identifies Express Route circutis that have not been completed. ",
+                                      "json": "# Recommendations for ExpressRoute\r\n\r\nReview idle ExpressRoute circuits that has not been provisioned (service provider has not completed provisioning or has deprovisioned), as they may represent additional cost.",
                                       "style": "upsell"
                                     },
-                                    "name": "Recommendations for premium Firewall"
+                                    "name": "Recommendations for ExpressRoute"
                                   },
                                   {
                                     "type": 3,
@@ -3329,8 +3329,8 @@
                                       "version": "KqlItem/1.0",
                                       "query": "resources\r\n| where type =~ 'Microsoft.Network/expressRouteCircuits' and properties.serviceProviderProvisioningState == \"NotProvisioned\"\r\n| extend ServiceLocation=tostring(properties.serviceProviderProperties.peeringLocation), ServiceProvider=tostring(properties.serviceProviderProperties.serviceProviderName), BandwidthInMbps=tostring(properties.serviceProviderProperties.bandwidthInMbps)\r\n| project   ERId=id,ERName = name, ERRG = resourceGroup, SKUName=tostring(sku.name), SKUTier=tostring(sku.tier), SKUFamily=tostring(sku.family), ERLocation = location, ServiceLocation, ServiceProvider, BandwidthInMbps\r\n| join kind = innerunique(\r\n    resources\r\n    | extend replaced_tags = replace('{}', 'null', tostring(tags))\r\n    | extend replaced_tags = parse_json(replaced_tags)\r\n    | mv-expand replaced_tags\r\n    | extend tagName = tostring(bag_keys(replaced_tags)[0])\r\n    | extend tagValue = tostring(replaced_tags['{TagName}'])\r\n    | where tagName has '{TagName}' and tagValue has '{TagValue}'\r\n    | extend ERId=id\r\n    | distinct ERId\r\n    )\r\n    on ERId\r\n\r\n",
                                       "size": 0,
-                                      "title": "Idle Express Route circuits",
-                                      "noDataMessage": "No idle Express Route circuit found",
+                                      "title": "Idle ExpressRoute circuits",
+                                      "noDataMessage": "No idle ExpressRoute circuits found",
                                       "noDataMessageStyle": 3,
                                       "showExportToExcel": true,
                                       "queryType": 1,
@@ -3348,11 +3348,11 @@
                                         "labelSettings": [
                                           {
                                             "columnId": "ERId",
-                                            "label": "Express Route ID"
+                                            "label": "ExpressRoute ID"
                                           },
                                           {
                                             "columnId": "ERName",
-                                            "label": "E.R. Name"
+                                            "label": "ER Name"
                                           },
                                           {
                                             "columnId": "ERRG",
@@ -3389,7 +3389,7 @@
                                         ]
                                       }
                                     },
-                                    "name": "Idle Express Route circuits"
+                                    "name": "Idle ExpressRoute circuits"
                                   }
                                 ]
                               },
@@ -3398,7 +3398,7 @@
                                 "comparison": "isEqualTo",
                                 "value": "ER"
                               },
-                              "name": "Express Route Group"
+                              "name": "ExpressRoute Group"
                             }
                           ]
                         },
@@ -4049,7 +4049,7 @@
                                     "type": 3,
                                     "content": {
                                       "version": "KqlItem/1.0",
-                                      "query": "resources \r\n| where type =~ 'microsoft.compute/disks' and managedBy == \"\"\r\n| extend diskState = tostring(properties.diskState)\r\n| where (tags !contains \"kubernetes.io-created-for-pvc\") and tags !contains \"ASR-ReplicaDisk\" and tags !contains \"asrseeddisk\"\r\n| where (managedBy == \"\" and diskState != 'ActiveSAS')\r\nor (diskState == 'Unattached' and diskState != 'ActiveSAS')\r\n| extend DiskId=id, DiskIDfull=id, DiskName=name, SKUName=sku.name, SKUTier=sku.tier, DiskSizeGB=tostring(properties.diskSizeGB), Location=location, TimeCreated=tostring(properties.timeCreated), QuickFix=id, SubId=subscriptionId\r\n| order by DiskId asc \r\n| project DiskId,DiskIDfull, DiskName, DiskSizeGB, SKUName, SKUTier, resourceGroup, QuickFix, Location, TimeCreated, subscriptionId,SubId\r\n| join kind = innerunique(\r\n    resources\r\n    | extend replaced_tags = replace('{}', 'null', tostring(tags))\r\n    | extend replaced_tags = parse_json(replaced_tags)\r\n    | mv-expand replaced_tags\r\n    | extend tagName = tostring(bag_keys(replaced_tags)[0])\r\n    | extend tagValue = tostring(replaced_tags['{TagName}'])\r\n    | extend DiskId = id\r\n    | where tagName has '{TagName}' and tagValue has '{TagValue}'\r\n    | distinct DiskId\r\n    )\r\n    on DiskId",
+                                      "query": "resources \r\n| where type =~ 'microsoft.compute/disks' and managedBy == \"\"\r\n| extend diskState = tostring(properties.diskState)\r\n| where (tags !contains \"kubernetes.io-created-for-pvc\") and tags !contains \"ASR-ReplicaDisk\" and tags !contains \"asrseeddisk\" and tags !contains \"RSVaultBackup\"\r\n| where (managedBy == \"\" and diskState != 'ActiveSAS')\r\nor (diskState == 'Unattached' and diskState != 'ActiveSAS')\r\n| extend DiskId=id, DiskIDfull=id, DiskName=name, SKUName=sku.name, SKUTier=sku.tier, DiskSizeGB=tostring(properties.diskSizeGB), Location=location, TimeCreated=tostring(properties.timeCreated), QuickFix=id, SubId=subscriptionId\r\n| order by DiskId asc \r\n| project DiskId,DiskIDfull, DiskName, DiskSizeGB, SKUName, SKUTier, resourceGroup, QuickFix, Location, TimeCreated, subscriptionId,SubId\r\n| join kind = innerunique(\r\n    resources\r\n    | extend replaced_tags = replace('{}', 'null', tostring(tags))\r\n    | extend replaced_tags = parse_json(replaced_tags)\r\n    | mv-expand replaced_tags\r\n    | extend tagName = tostring(bag_keys(replaced_tags)[0])\r\n    | extend tagValue = tostring(replaced_tags['{TagName}'])\r\n    | extend DiskId = id\r\n    | where tagName has '{TagName}' and tagValue has '{TagValue}'\r\n    | distinct DiskId\r\n    )\r\n    on DiskId",
                                       "size": 0,
                                       "title": "Unattached disks",
                                       "noDataMessage": "There aren't any unattached disks!",
@@ -5169,7 +5169,7 @@
                                     "type": 3,
                                     "content": {
                                       "version": "KqlItem/1.0",
-                                      "query": "resources\r\n| where type == 'microsoft.compute/virtualmachines'\r\n| extend vmSize = properties.hardwareProfile.vmSize\r\n| extend processorType = case(\r\n    // ARM Processors\r\n    vmSize has \"Epsv5\" or vmSize has \"Epdsv5\" or vmSize has \"Dpsv5\" or vmSize has \"Dpdsv\", \"ARM\",\r\n    // AMD Processors\r\n    vmSize has \"Standard_D2a\" or vmSize has \"Standard_D4a\" or vmSize has \"Standard_D8a\" or vmSize has \"Standard_D16a\" or vmSize has \"Standard_D32a\" or vmSize has \"Standard_D48a\" or vmSize has \"Standard_D64a\" or vmSize has \"Standard_D96a\" or vmSize has \"Standard_D2as\" or vmSize has \"Standard_D4as\" or vmSize has \"Standard_D8as\" or vmSize has \"Standard_D16as\" or vmSize has \"Standard_D32as\" or vmSize has \"Standard_D48as\" or vmSize has \"Standard_D64as\" or vmSize has \"Standard_D96as\", \"AMD\",\r\n    \"Intel\"\r\n)\r\n| project vmName = name, processorType, vmSize, resourceGroup\r\n",
+                                      "query": "resources\r\n| where type == 'microsoft.compute/virtualmachines'\r\n| extend vmSize = properties.hardwareProfile.vmSize\r\n| extend processorType = case(\r\n    // ARM Processors\r\n    vmSize has \"Epsv5\" or vmSize has \"Epdsv5\" or vmSize has \"Dpsv5\" or vmSize has \"Dpdsv\", \"ARM\",\r\n    // AMD Processors\r\n    vmSize has \"Standard_D2a\" or vmSize has \"Standard_D4a\" or vmSize has \"Standard_D8a\" or vmSize has \"Standard_D16a\" or vmSize has \"Standard_D32a\" or vmSize has \"Standard_D48a\" or vmSize has \"Standard_D64a\" or vmSize has \"Standard_D96a\" or vmSize has \"Standard_D2as\" or vmSize has \"Standard_D4as\" or vmSize has \"Standard_D8as\" or vmSize has \"Standard_D16as\" or vmSize has \"Standard_D32as\" or vmSize has \"Standard_D48as\" or vmSize has \"Standard_D64as\" or vmSize has \"Standard_D96as\" or vmSize has \"Standard_D2ads\" or vmSize has \"Standard_D4ads\"or vmSize has \"Standard_D8ads\" or vmSize has \"Standard_D16ads\" or vmSize has \"Standard_D32ads\"or vmSize has \"Standard_D48ads\"or vmSize has \"Standard_D64ads\"or vmSize has \"Standard_D96ads\", \"AMD\",\r\n    \"Intel\"\r\n)\r\n| project vmName = name, processorType, vmSize, resourceGroup\r\n",
                                       "size": 0,
                                       "title": "List of VMs per processor type",
                                       "showExportToExcel": true,
