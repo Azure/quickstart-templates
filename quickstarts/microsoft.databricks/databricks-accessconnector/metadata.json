@@ -1,0 +1,9 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Deploy an Azure Databricks Access Connector",
+  "description": "This template allows you to create an Azure Databricks Access Connector.",
+  "summary": "Deploy an Azure Databricks Access Connector.",
+  "githubUsername": "v-gsapaharam",
+  "dateUpdated": "2023-02-09"
+}
