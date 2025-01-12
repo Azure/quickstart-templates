@@ -6,9 +6,10 @@ products:
 - azure-resource-manager
 urlFragment: recovery-services-vault-create
 languages:
-- json
 - bicep
+- json
 ---
+
 # Create a Recovery Services vault with advanced options
 
 ![Azure Public Test Date](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.recoveryservices/recovery-services-vault-create/PublicLastTestDate.svg)
