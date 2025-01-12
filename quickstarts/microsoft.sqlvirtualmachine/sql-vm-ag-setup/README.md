@@ -6,6 +6,7 @@ products:
 - azure-resource-manager
 urlFragment: sql-vm-ag-setup
 languages:
+- bicep
 - json
 ---
 # Deploy SQL Always ON setup with existing SQL Virtual Machines
@@ -18,6 +19,8 @@ languages:
 
 ![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/BestPracticeResult.svg)
 ![Cred Scan Check](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/CredScanResult.svg)
+
+![Bicep Version](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/BicepVersion.svg)
 
 Before deploying the template you must have the following
 
