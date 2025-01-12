@@ -6,8 +6,10 @@ products:
 - azure-resource-manager
 urlFragment: function-app-linux-consumption-remote-build
 languages:
+- bicep
 - json
 ---
+
 # Function App on Linux Consumption Plan with Remote Build
 
 ![Azure Public Test Date](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.web/function-app-linux-consumption-remote-build/PublicLastTestDate.svg)
@@ -18,6 +20,8 @@ languages:
 
 ![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.web/function-app-linux-consumption-remote-build/BestPracticeResult.svg)
 ![Cred Scan Check](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.web/function-app-linux-consumption-remote-build/CredScanResult.svg)
+
+![Bicep Version](https://azurequickstartsservice.blob.core.windows.net/badges/quickstarts/microsoft.web/function-app-linux-consumption-remote-build/BicepVersion.svg)
 
 This sample Azure Resource Manager template deploys an Azure Function App on Linux Consumption plan and required resource including the app setting to deploy using zip package when **remote build** is needed (for example: to get Linux specific packages in python, node.js).
 
