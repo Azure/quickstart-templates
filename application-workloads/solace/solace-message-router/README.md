@@ -6,6 +6,7 @@ products:
 - azure-resource-manager
 urlFragment: solace-message-router
 languages:
+- bicep
 - json
 ---
 # Deploy Solace PubSub+ message broker onto Azure Linux VM(s)
@@ -19,14 +20,15 @@ languages:
 ![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/application-workloads/solace/solace-message-router/BestPracticeResult.svg)
 ![Cred Scan Check](https://azurequickstartsservice.blob.core.windows.net/badges/application-workloads/solace/solace-message-router/CredScanResult.svg)
 
+![Bicep Version](https://azurequickstartsservice.blob.core.windows.net/badges/application-workloads/solace/solace-message-router/BicepVersion.svg)
+
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fapplication-workloads%2Fsolace%2Fsolace-message-router%2Fazuredeploy.json)
 
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fapplication-workloads%2Fsolace%2Fsolace-message-router%2Fazuredeploy.json)
 
 The Solace PubSub+ software event broker meets the needs of big data, cloud migration, and Internet-of-Things initiatives, and enables microservices and event-driven architecture. Capabilities include topic-based publish/subscribe, request/reply, message queues/queueing, and data streaming for IoT devices and mobile/web apps. The event broker supports open APIs and standard protocols including AMQP, JMS, MQTT, REST, and WebSocket. As well, it can be deployed in on-premise datacenters, natively within private and public clouds, and across complex hybrid cloud environments.
 
-How to Deploy a Solace PubSub+ Software Event Broker
--------------------
+## How to Deploy a Solace PubSub+ Software Event Broker
 
 Message brokers can be deployed in three node HA clusters or as single, standalone nodes. For simple test environments that only need to validate application functionality, a single instance will suffice.
 
@@ -44,7 +46,7 @@ The Load Balancer in the diagram is exposed publicly and the VMs are also public
 
 The deployment is a two step process:
 
-### Step 1:
+### Step 1
 
 Obtain a reference to the Docker image of the Solace PubSub+ event broker to be deployed
 
@@ -52,19 +54,20 @@ First, decide which [Solace PubSub+ event broker](//docs.solace.com/Solace-SW-Br
 
 The Docker image reference can be:
 
-*	A public or accessible private Docker registry repository name with an optional tag. This is the recommended option if using PubSub+ Standard. The default is to use the latest event broker image [available from Docker Hub](//hub.docker.com/r/solace/solace-pubsub-standard/ ) as `solace/solace-pubsub-standard:latest`, or use a specific version [tag](//hub.docker.com/r/solace/solace-pubsub-standard/tags/ ).
+- A public or accessible private Docker registry repository name with an optional tag. This is the recommended option if using PubSub+ Standard. The default is to use the latest event broker image [available from Docker Hub](//hub.docker.com/r/solace/solace-pubsub-standard/ ) as `solace/solace-pubsub-standard:latest`, or use a specific version [tag](//hub.docker.com/r/solace/solace-pubsub-standard/tags/ ).
 
-*	A Docker image download URL
-     * If using Solace PubSub+ Enterprise Evaluation Edition, go to the Solace Downloads page. For the image reference, copy and use the download URL in the Solace PubSub+ Enterprise Evaluation Edition Docker Images section.
+- A Docker image download URL
 
-         | PubSub+ Enterprise Evaluation Edition<br/>Docker Image
-         | :---: |
-         | 90-day trial version of PubSub+ Enterprise |
-         | [Get URL of Evaluation Docker Image](http://dev.solace.com/downloads#eval ) |
+  - If using Solace PubSub+ Enterprise Evaluation Edition, go to the Solace Downloads page. For the image reference, copy and use the download URL in the Solace PubSub+ Enterprise Evaluation Edition Docker Images section.
 
-     * If you have purchased a Docker image of Solace PubSub+ Enterprise, Solace will give you information for how to download the compressed tar archive package from a secure Solace server. Contact Solace Support at support@solace.com if you require assistance. Then you can host this tar archive together with its MD5 on a file server and use the download URL as the image reference.
+    | PubSub+ Enterprise Evaluation Edition<br/>Docker Image |
+    | :---: |
+    | 90-day trial version of PubSub+ Enterprise |
+    | [Get URL of Evaluation Docker Image](http://dev.solace.com/downloads#eval ) |
 
-### Step 2:
+  - If you have purchased a Docker image of Solace PubSub+ Enterprise, Solace will give you information for how to download the compressed tar archive package from a secure Solace server. Contact Solace Support at [support@solace.com](support@solace.com) if you require assistance. Then you can host this tar archive together with its MD5 on a file server and use the download URL as the image reference.
+
+### Step 2
 
 Hit the "Deploy to Azure" button, and in the deployment template add the link to the Solace PubSub+ software event broker.
 
@@ -118,7 +121,7 @@ In addition to the above resources, the deployment creates an Azure Load Balance
 
 If OMS workspace name has been specified, Microsoft OMS (Operations Management Suite) Agents are also installed on each event broker using the OMS Agent Extension. They collect and send logs to a new or existing Azure Log Analytics workspace resource that aggregates logs and diagnostics from each virtual machine in the deployment.
 
-# Gaining admin access to the event broker
+## Gaining admin access to the event broker
 
 To manage the currently AD-Active event broker, you can connect to the Public IP Address associated with the Load Balancer as the 'admin' user (for the rest of the document it is assumed that the publicly exposed Load Balancer option has been deployed). From the Resource Group view for your deployment on the Azure Portal, the Load Balancer is the resource named `myLB`, and its Public IP Address is the resource named `myLBPublicIPD`, which has an IP address and a DNS name that you can connect to.
 
@@ -133,8 +136,9 @@ Use the Load Balacer's external Public IP at port 8080 to access these services.
 If you are used to working with console access to Solace PubSub+, this is available with the Azure instance.
 
 There are two options to connect:
-* Open a CLI SSH connection on port 2222 to the active node through the Load Balancer as described above; or
-* Access the individual nodes:
+
+- Open a CLI SSH connection on port 2222 to the active node through the Load Balancer as described above; or
+- Access the individual nodes:
 
 The [connect] button at the upper left of the `solacetestvm0`, `solacetestvm1`, or `solacetestvm2` resource view displays this information:
 
@@ -142,11 +146,11 @@ The [connect] button at the upper left of the `solacetestvm0`, `solacetestvm1`, 
 
 The simplest way is to [create an Azure Bastion first, then use the specified "Admin Username" and "Admin Password" to log in](https://docs.microsoft.com/azure/bastion/bastion-connect-vm-ssh-linux#username). Once you have access to the base OS command line you can access the PubSub+ CLI with the following command:
 
-```
+```bash
 sudo docker exec -it solace cli
 ```
 
-# Testing data access to the event broker
+## Testing data access to the event broker
 
 To test data traffic though the newly created event broker instance, visit the Solace developer portal and select your preferred programming language to [send and receive messages](http://dev.solace.com/get-started/send-receive-messages/). Under each language there is a Publish/Subscribe tutorial that will help you get started.
 
@@ -154,7 +158,7 @@ To connect to the currently AD-Active event broker for messaging, use the Public
 
 ![alt text](images/solace_tutorial.png "getting started publish/subscribe")
 
-# Troubleshooting event broker startup
+## Troubleshooting event broker startup
 
 All startup logs are located on the host under this path: `/var/lib/waagent/custom-script/download/0/` and are readable by root only.
 

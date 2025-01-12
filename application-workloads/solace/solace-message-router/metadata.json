@@ -5,7 +5,7 @@
   "description": "This template allows you to deploy either a standalone Solace PubSub+ message broker or a three node High Availability cluster of Solace PubSub+ message brokers onto Azure Linux VM(s).",
   "summary": "This template deploys either a standalone Solace PubSub+ message broker or a three node High Availability cluster of Solace PubSub+ message brokers onto Azure Linux VM(s).",
   "githubUsername": "SolaceDev",
-  "dateUpdated": "2023-04-03",
+  "dateUpdated": "2024-02-22",
   "environments": [
     "AzureCloud"
   ]
