@@ -54,10 +54,4 @@ By default, `anbox-cloud-appliance init` (see the linked instructions in the **D
 
 The template includes two parameters that allow the user to expose Anbox services running on the VM to the public internet. The first parameter, `exposeAnboxManagementService`, exposes the Anbox Management Service on port 8444. The second parameter, `exposeAnboxContainerServices`, exposes Anbox container services on the port range 10000-11000. When the default arguments for these parameters are not overriden, the Anbox Management Service and any container services will only be accessible from the VM.
 
-## Notes
-
-### Anbox Cloud on ARM
-
-ARM processors are particularly well-suited to Anbox Cloud, but Ubuntu Pro images for ARM processors are not yet available. As such, the default VM in the template runs on x86 processors and the default Ubuntu image is built for x86. Users wishing to employ ARM processors must launch a VM running on ARM processors from a non-Pro Ubuntu image built for ARM and instruct `cloud-init` to attach Pro to the VM using a token. They can accomplish this by overriding the default arguments for the template's `virtualMachineSize`, `ubuntuImageOffer`, `ubuntuImageSKU`, and `ubuntuProToken` parameters.
-
 `Tags: Anbox, Azure4Student, Microsoft.Compute/virtualMachines, Microsoft.Network/networkInterfaces, Microsoft.Network/networkSecurityGroups, Microsoft.Network/publicIPAddresses, Microsoft.Network/virtualNetworks, Microsoft.Network/virtualNetworks/subnets, Ubuntu`

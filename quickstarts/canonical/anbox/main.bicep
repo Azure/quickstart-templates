@@ -30,7 +30,7 @@ param subnetName string = 'anboxVirtualNetworkSubnet'
 param ubuntuImageOffer string = '0001-com-ubuntu-pro-jammy'
 
 @description('SKU of the Ubuntu image from which to launch the virtual machine; must be a Pro SKU if an argument is not provided for the ubuntuProToken parameter')
-param ubuntuImageSKU string = 'pro-22_04-lts-gen2'
+param ubuntuImageSKU string = 'pro-22_04-lts-arm64'
 
 @description('Ubuntu Pro token to attach to the virtual machine; will be ignored by cloud-init if the arguments provided for the ubuntuImageOffer and ubuntuImageSKU parameters correspond to a Pro image (see https://cloudinit.readthedocs.io/en/latest/reference/modules.html#ubuntu-pro)')
 param ubuntuProToken string = ''
@@ -49,7 +49,7 @@ param virtualMachineName string = 'anboxVirtualMachine'
 param virtualMachineOperatingSystemDiskSizeInGB int = 40
 
 @description('Size of the virtual machine; must comply with https://anbox-cloud.io/docs/reference/requirements#anbox-cloud-appliance-4')
-param virtualMachineSize string = 'Standard_D4s_v5'
+param virtualMachineSize string = 'Standard_D4ps_v5'
 
 @description('CIDR block of the virtual network')
 param virtualNetworkAddressPrefix string = '10.0.0.0/16'
@@ -102,12 +102,12 @@ var dataDisks = addDedicatedDataDiskForLXD ? [
   }
 ] : []
 
-var imagePlan = empty(ubuntuProToken) ? {
+var imagePlan = empty(ubuntuProToken) && startsWith(ubuntuImageOffer, '0001') ? {
   name: ubuntuImageSKU
   product: ubuntuImageOffer
   publisher: 'canonical'
 } : null
-  
+
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
