@@ -5,5 +5,5 @@
   "description": "Dokku is a mini-heroku-style PaaS on a single VM.",
   "summary": "Dokku is a mini-heroku-style PaaS on a single VM. You can easily git-push any Heroku buildpack or Dockerfile app and it'll be hosted on this VM.",
   "githubUsername": "dokku",
-  "dateUpdated": "2024-12-20"
+  "dateUpdated": "2025-01-13"
 }
