@@ -29,7 +29,7 @@ The following resources are deployed as part of the solution:
 
 + **Virtual Network**: A virtual network with two subnets, AppGatewaySubnet and WebSubnet.
 + **Application Gateway**: Application Gateway with WAF, size Medium by default and an instance count of 2 by default. The Application Gateway will have a public IP and will route connections to the internal addresses of two backend IIS servers on 80 and 443 with session persistence disabled.
-+ **Two Windows Servers**: Two Windows 2016 (by default) servers running IIS. These servers will have a public IP and will be using managed disks. Default size is Standard_D2_v2.
++ **Two Windows Servers**: Two Windows 2022 (by default) servers running IIS. These servers will have a public IP and will be using managed disks. Default size is Standard_D2as_v5.
 
 ## Prerequisites
 
