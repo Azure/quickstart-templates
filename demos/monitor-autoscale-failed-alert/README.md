@@ -1,5 +1,5 @@
 ---
-description: This template allows you to deploy a simple alert which uses an action group to send email notifications for any failed Autoscale records in the Azure Activity Log
+description: This template allows you to deploy a simple alert that uses an action group to send email notifications for any failed Autoscale records in the Azure Activity Log
 page_type: sample
 products:
 - azure
@@ -19,7 +19,7 @@ languages:
 ![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-autoscale-failed-alert/BestPracticeResult.svg)
 ![Cred Scan Check](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-autoscale-failed-alert/CredScanResult.svg)
 
-The following template deploys an Activity Log Alert with Action Group integrated
+The following template deploys an Activity Log Alert with Action Group integrated.
 
 The template deploys an Activity Log Alert with Action Group configured to send email notifications for any failed Autoscale records in the Azure Activity Log. The alert rule will match any failed record in the Activity Log in the Autoscale category.
 

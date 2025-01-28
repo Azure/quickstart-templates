@@ -19,7 +19,7 @@ languages:
 ![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-autoscale-alert/BestPracticeResult.svg)
 ![Cred Scan Check](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-autoscale-alert/CredScanResult.svg)
 
-The following template deploys an Activity Log Alert with Action Group integrated
+The following template deploys an Activity Log Alert with Action Group integrated.
 
 The template deploys an Activity Log Alert with Action Group configured to send email notifications for any Autoscale records in the Azure Activity Log. The alert rule will match any record in the Activity Log in the Autoscale category.
 
