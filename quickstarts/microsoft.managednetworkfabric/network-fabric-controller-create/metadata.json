@@ -1,0 +1,11 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Create a Managed Network Fabric - Network Fabric Controller",
+  "description": "This template creates a Managed Network Fabric - Network Fabric Controller along with its associated resources in a given region and resource group",
+  "summary": "This template creates a Managed Network Fabric - Network Fabric Controller along with its associated resources in a given region and resource group",
+  "dateUpdated": "2023-07-23",
+  "environments": [
+    "AzureCloud"
+  ]
+}

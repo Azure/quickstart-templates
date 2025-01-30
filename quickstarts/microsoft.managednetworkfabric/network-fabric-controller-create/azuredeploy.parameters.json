@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "networkFabricControllerName": {
+      "value": "networkFabricControllerName"
+    },
+    "annotation": {
+      "value": "annotation"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "isWorkloadManagementNetworkEnabled": {
+      "value": "True"
+    },
+    "nfcSku": {
+      "value": "Basic"
+    },
+    "infrastructureExpressRouteConnections": {
+      "value": [
+        {
+          "expressRouteCircuitId": "/subscriptions//resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/example-expressRouteCircuit",
+          "expressRouteAuthorizationKey": "1234ABCD-0A1B-1234-5678-123456ABCDEF"
+        },
+        {
+          "expressRouteCircuitId": "/subscriptions//resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/example-expressRouteCircuit1",
+          "expressRouteAuthorizationKey": "1234ABCD-0A1B-1234-5678-123456ABCDEF"
+        }
+      ]
+    },
+    "workloadExpressRouteConnections": {
+      "value": [
+        {
+          "expressRouteCircuitId": "/subscriptions//resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/example-expressRouteCircuit",
+          "expressRouteAuthorizationKey": "1234ABCD-0A1B-1234-5678-123456ABCDEF"
+        },
+        {
+          "expressRouteCircuitId": "/subscriptions//resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/example-expressRouteCircuit1",
+          "expressRouteAuthorizationKey": "1234ABCD-0A1B-1234-5678-123456ABCDEF"
+        }
+      ]
+    },
+    "ipv4AddressSpace": {
+      "value": "10.0.0.0/19"
+    },
+    "ipv6AddressSpace": {
+      "value": ""
+    }
+  }
+}
