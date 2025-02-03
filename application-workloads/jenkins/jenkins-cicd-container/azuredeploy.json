@@ -109,7 +109,8 @@
         "1.21.2",
         "1.21.7",
         "1.22.2",
-        "1.22.4"
+        "1.22.4",
+        "1.25.6"
       ],
       "metadata": {
         "description": "The version of Kubernetes."
