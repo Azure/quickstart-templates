@@ -19,7 +19,7 @@
     "rank": 26,
     "scenario": "Azure App Service",
     "roles": "Developer",
-    "learning": "https://docs.microsoft.com/learn/browse/?term=python&WT.mc_id=Portal-Microsoft_Azure_Education",
+    "learning": "https://learn.microsoft.com/training/browse/?term=python&WT.mc_id=portaledu_inproduct_template&terms=python",
     "isA4EActive": "true",
     "usefulLink": [
       "@{name=Getting Started; rank=1; url=https://github.com/Azure/azure-quickstart-templates/blob/master/quickstarts/microsoft.web/webapp-linux-django/GettingStarted.md}",
