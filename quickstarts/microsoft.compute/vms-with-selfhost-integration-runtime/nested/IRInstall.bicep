@@ -12,7 +12,7 @@ resource installGW 'Microsoft.Compute/virtualMachines/extensions@2022-08-01' = {
   properties: {
     publisher: 'Microsoft.Compute'
     type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.7'
+    typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [

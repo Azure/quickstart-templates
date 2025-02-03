@@ -13,7 +13,7 @@ param IntegrationRuntimeName string = 'ir-${uniqueString(resourceGroup().id)}'
 param NodeCount int = 1
 
 @description('SKU Size for the VMs')
-param vmSize string = 'Standard_A4_v2'
+param vmSize string = 'Standard_D2s_v3'
 
 @description('User name for the virtual machine')
 param adminUserName string
@@ -48,7 +48,7 @@ var delimiters = [
 var prefix = split(IntegrationRuntimeName, delimiters)[0]
 var networkSecurityGroupName = '${IntegrationRuntimeName}nsg'
 var subnetId = resourceId(existingVnetResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, existingSubnetInYourVnet)
-var scriptURL = uri(_artifactsLocation, 'gatewayInstall.ps1${_artifactsLocationSasToken}')
+var scriptURL = '${_artifactsLocation}/gatewayInstall.ps1${_artifactsLocationSasToken}'
 
 module nestedTemplate 'nested/IRtemplate.bicep' = {
   name: 'nestedTemplate'
