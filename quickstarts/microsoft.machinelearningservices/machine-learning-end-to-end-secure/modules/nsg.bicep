@@ -16,22 +16,9 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
   properties: {
     securityRules: [
       {
-        name: 'BatchNodeManagement'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '29876-29877'
-          sourceAddressPrefix: 'BatchNodeManagement'
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 120
-          direction: 'Inbound'
-        }
-      }
-      {
         name: 'AzureMachineLearning'
         properties: {
-          protocol: 'Tcp'
+          protocol: '*'
           sourcePortRange: '*'
           destinationPortRange: '44224'
           sourceAddressPrefix: 'AzureMachineLearning'
@@ -47,7 +34,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '*'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'AzureActiveDirectory'
           access: 'Allow'
           priority: 140
@@ -60,10 +47,36 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '443'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'AzureMachineLearning'
           access: 'Allow'
           priority: 150
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AzureMachineLearningOutbound2'
+        properties: {
+          protocol: 'UDP'
+          sourcePortRange: '*'
+          destinationPortRange: '5831'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationAddressPrefix: 'AzureMachineLearning'
+          access: 'Allow'
+          priority: 160
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'BatchNodeManagement'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationAddressPrefix: 'BatchNodeManagement.${location}'
+          access: 'Allow'
+          priority: 170
           direction: 'Outbound'
         }
       }
@@ -73,10 +86,10 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '443'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'AzureResourceManager'
           access: 'Allow'
-          priority: 160
+          priority: 180
           direction: 'Outbound'
         }
       }
@@ -86,10 +99,10 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '443'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'Storage.${location}'
           access: 'Allow'
-          priority: 170
+          priority: 190
           direction: 'Outbound'
         }
       }
@@ -99,23 +112,10 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '443'
-          sourceAddressPrefix: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'AzureFrontDoor.FrontEnd'
           access: 'Allow'
-          priority: 180
-          direction: 'Outbound'
-        }
-      }
-      {
-        name: 'AzureContainerRegistry'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '443'
-          sourceAddressPrefix: '*'
-          destinationAddressPrefix: 'AzureContainerRegistry.${location}'
-          access: 'Allow'
-          priority: 190
+          priority: 200
           direction: 'Outbound'
         }
       }
@@ -128,7 +128,33 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
           sourceAddressPrefix: 'VirtualNetwork'
           destinationAddressPrefix: 'MicrosoftContainerRegistry'
           access: 'Allow'
-          priority: 200
+          priority: 210
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AzureFrontDoor1stParty'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationAddressPrefix: 'AzureFrontDoor.firstparty'
+          access: 'Allow'
+          priority: 220
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AzureMonitor'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationAddressPrefix: 'AzureMonitor'
+          access: 'Allow'
+          priority: 230
           direction: 'Outbound'
         }
       }
