@@ -60,7 +60,7 @@ An integrated ARM Template (<a href="https://azure.microsoft.com/documentation/a
 You can watch [this video](images/Risk_Analysis_1080.mp4) for the quick overview of this solution.
 
 ##  2. Solution Template Overview
-***Solution Templates*** provide customers with a highly automated process to launch enterprise ready first and 3rd party ISV solution stacks on Azure in a pre-production environment. The **Solution Template** effort is complimentary to the [Azure Marketplace test drive program](https://azure.microsoft.com/marketplace/test-drives/). These fully baked stacks enable customers to quickly stand up a PoC or Piloting environments and also integrate it with their systems and customization.
+***Solution Templates*** provide customers with a highly automated process to launch enterprise ready first and 3rd party ISV solution stacks on Azure in a pre-production environment. The **Solution Template** effort is complimentary to the [Azure Marketplace test drive program](https://azuremarketplace.microsoft.com/en-us/marketplace/apps?filters=test-drive). These fully baked stacks enable customers to quickly stand up a PoC or Piloting environments and also integrate it with their systems and customization.
 
 Customers benefit greatly from solution templates because of the ease with which they can stand up enterprise-grade, fully integrated stacks on Azure. The extensive automation and testing of these solutions will allow them to spin up pre-production environments with minimal manual steps and customization.  Most importantly, customers now have the confidence to transition the solution into a fully production-ready environment with confidence.
 
@@ -79,7 +79,7 @@ The target audience for these solution templates are
 *  and lastly, but very importantly - **IT professionals** who need to stand-up and/or deploy infrastructure stacks.
 
 ##  5. Prerequisites
-* Azure Subscription - if you want to test drive individual ISV products, please check out the [Azure Marketplace Test Drive Program ](https://azure.microsoft.com/marketplace/test-drives/)
+* Azure Subscription - if you want to test drive individual ISV products, please check out the [Azure Marketplace Test Drive Program ](https://azuremarketplace.microsoft.com/en-us/marketplace/apps?filters=test-drive)
 * Azure user account with Contributor/Admin Role
 * Sufficient Quota - At least 20 Cores(with default VM Sizes)
 * Azure Marketplace Deployment Agreements - VM Images from Azure marketplace need a registered Azure credit card for deployments to be successful. We understand that some customers (especially EA and internal MS customers) may not have this configured leading to failed deployments.
