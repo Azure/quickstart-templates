@@ -71,9 +71,9 @@ defaults
     mode    http
     option  httplog
     option  dontlognull
-    contimeout 5000
-    clitimeout 50000
-    srvtimeout 50000
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
     errorfile 400 /etc/haproxy/errors/400.http
     errorfile 403 /etc/haproxy/errors/403.http
     errorfile 408 /etc/haproxy/errors/408.http
