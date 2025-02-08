@@ -15,7 +15,7 @@ var webSiteName = toLower('wapp-${appName}')
 var appInsightName = toLower('appi-${appName}')
 var logAnalyticsName = toLower('la-${appName}')
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
   sku: {
@@ -28,7 +28,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource appService 'Microsoft.Web/sites@2020-06-01' = {
+resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: webSiteName
   location: location
   identity: {
@@ -46,11 +46,12 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
     httpsOnly: true
     siteConfig: {
       minTlsVersion: '1.2'
+      ftpsState: 'FtpsOnly'
     }
   }
 }
 
-resource appServiceLogging 'Microsoft.Web/sites/config@2020-06-01' = {
+resource appServiceLogging 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: appService
   name: 'appsettings'
   properties: {
@@ -61,7 +62,7 @@ resource appServiceLogging 'Microsoft.Web/sites/config@2020-06-01' = {
   ]
 }
 
-resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2020-06-01' = {
+resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2022-03-01' = {
   parent: appService
   name: 'Microsoft.ApplicationInsights.AzureWebSites'
   dependsOn: [
@@ -69,7 +70,7 @@ resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2020-06-01'
   ]
 }
 
-resource appServiceAppSettings 'Microsoft.Web/sites/config@2020-06-01' = {
+resource appServiceAppSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: appService
   name: 'logs'
   properties: {
@@ -107,7 +108,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: logAnalyticsName
   location: location
   tags: {
