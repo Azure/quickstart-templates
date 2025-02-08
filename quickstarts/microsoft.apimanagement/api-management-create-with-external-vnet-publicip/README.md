@@ -4,6 +4,7 @@ page_type: sample
 products:
 - azure
 - azure-resource-manager
+- azure-api-management
 urlFragment: api-management-create-with-external-vnet-publicip
 languages:
 - bicep
