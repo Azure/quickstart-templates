@@ -1,0 +1,9 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Cribl Stream",
+  "description": "Cribl is a data engine for IT and Security.",
+  "summary": "Cribl Stream is a vendor neutral, purpose-built processing engine for data security and IT operations focused on centralized parsing and processing of event data.",
+  "githubUsername": "criblio",
+  "dateUpdated": "2024-08-01"
+}
