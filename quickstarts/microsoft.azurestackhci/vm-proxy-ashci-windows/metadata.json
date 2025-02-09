@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Create a VM with proxy config on Azure Stack HCI",
+  "description": "This template creates a Windows VM with a proxy configuration on Azure Stack HCI version 23H2+",
+  "summary": "Create a VM from the referenced image on Azure Stack HCI",
+  "githubUsername": "mbrat2005",
+  "validationType": "Manual",
+  "dateUpdated": "2024-09-05"
+}
