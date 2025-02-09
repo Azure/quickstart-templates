@@ -5,5 +5,5 @@
   "description": "The Azure Database Migration Service (DMS) is designed to streamline the process of migrating on-premises databases to Azure. DMS will simplify the migration of existing on-premises SQL Server and Oracle databases to Azure SQL Database, Azure SQL Managed Instance or Microsoft SQL Server in an Azure Virtual Machine. This template would deploy an instance of Azure Database Migration service, an Azure VM with SQL server installed on it which will act as a Source server with pre created database on it and a Target Azure SQL DB server which will have a pre-created schema of the database to be migrated from Source to Target server. The template will also deploy the required resources like NIC, vnet etc for supporting the Source VM, DMS service and Target server.",
   "summary": "The Azure Database Migration Service is a fully managed service designed to enable seamless migrations from multiple database sources to Azure Data platforms with minimal downtime.",
   "githubUsername": "ash1625",
-  "dateUpdated": "2021-04-26"
+  "dateUpdated": "2023-02-21"
 }
