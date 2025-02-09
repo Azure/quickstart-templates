@@ -2,8 +2,8 @@
   "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
   "type": "QuickStart",
   "itemDisplayName": "Create an API Management instance with custom hostnames",
-  "description": "This template demonstrates how to create a instance of Azure API Management with custom hostname for portal and multiple custom hostnames for proxy",
-  "summary": "This template demonstrates how to create a instance of Azure API Management with custom hostname for portal and multiple custom hostnames for proxy",
+  "description": "This template demonstrates how to create an instance of Azure API Management with custom hostname (domain) for portal and multiple custom hostnames for gateway",
+  "summary": "This template demonstrates how to create a instance of Azure API Management with custom hostname (domain) for portal and multiple custom hostnames for gateway",
   "githubUsername": "kedarjoshi",
   "dateUpdated": "2022-03-14"
 }
