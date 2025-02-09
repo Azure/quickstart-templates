@@ -1,5 +1,5 @@
 ---
-description: This template creates a new Action group on Azure, this action group can be then used for configuring alerts on Azure.
+description: This template creates a new Action group on Azure. This action group can then be used for configuring alerts on Azure.
 page_type: sample
 products:
 - azure
@@ -9,7 +9,7 @@ languages:
 - json
 - bicep
 ---
-# Create a new action groupn on Azure.
+# Create a new action group on Azure.
 
 ![Azure Public Test Date](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-action-groups/PublicLastTestDate.svg)
 ![Azure Public Test Result](https://azurequickstartsservice.blob.core.windows.net/badges/demos/monitor-action-groups/PublicDeployment.svg)
