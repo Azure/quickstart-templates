@@ -1,0 +1,12 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "Azure Database for PostgreSQL flexible with Data encryption",
+  "description": "This template provides a way to deploy a Flexible server Azure database for PostgreSQL with VNet integration and Data encryption enabled. This quickstart template allows for creation of all dependent resources like Managed Identity, Key Vault, Key vault Key, virtual network with subnet, private DNS zone and link between them",
+  "summary": "This template provides a way to deploy a Flexible server Azure database for PostgreSQL with VNet integration and Data encryption enabled.",
+  "githubUsername": "ambrahma",
+  "dateUpdated": "2023-06-08",
+  "environments": [
+    "AzureCloud"
+  ]
+}
