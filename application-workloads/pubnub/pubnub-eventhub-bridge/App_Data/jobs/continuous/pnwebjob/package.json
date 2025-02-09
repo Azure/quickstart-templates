@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "pubnub": "4.23.0",
+    "pubnub": "7.4.0",
     "azure-event-hubs": ">=0.0.3",
     "bluebird": "^3.4.1"
   }
