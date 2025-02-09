@@ -32,7 +32,7 @@ param storageAccountType string = 'Standard_LRS'
 
 var storageAccountName = 'flowlogs${uniqueString(resourceGroup().id)}'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -42,14 +42,15 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
   properties: {}
 }
 
-resource networkWatcher 'Microsoft.Network/networkWatchers@2022-01-01' = {
+resource networkWatcher 'Microsoft.Network/networkWatchers@2023-09-01' = {
   name: networkWatcherName
   location: location
   properties: {}
 }
 
-resource flowLog 'Microsoft.Network/networkWatchers/flowLogs@2022-01-01' = {
-  name: '${networkWatcherName}/${flowLogName}'
+resource flowLog 'Microsoft.Network/networkWatchers/flowLogs@2023-09-01' = {
+  parent: networkWatcher
+  name: flowLogName
   location: location
   properties: {
     targetResourceId: existingNSG
@@ -65,3 +66,8 @@ resource flowLog 'Microsoft.Network/networkWatchers/flowLogs@2022-01-01' = {
     }
   }
 }
+
+output location string = location
+output name string = flowLog.name
+output resourceGroupName string = resourceGroup().name
+output resourceId string = flowLog.id
