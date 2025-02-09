@@ -11,7 +11,7 @@ These are the parameters on the template, most of them already have values inser
 Parameter         | Suggested value     | Description
 :--------------- | :-------------      |:---------------------
 **vmName** | Name of your VM | The name of you Virtual Machine.
-**VmSize** | Standard_D2_v2 | The size of the VM.
+**VmSize** | Standard_D2s_v3 | The size of the VM.
 **adminUsername** | adminusername | Usernames can be a maximum of 20 characters and cannot end in a period (".").
 **adminPassword** | Complex Password | Password requirements between 12 to 72 characters and have lower and upper characters, a digit and a special character (Regex match [\W_])
 **Location**| The default location | Select the geographic location for your resource group.
