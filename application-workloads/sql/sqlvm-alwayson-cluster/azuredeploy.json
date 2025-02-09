@@ -291,23 +291,27 @@
       "sqllbFEConfigID": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations',variables('lbSettings').sqlLBName,variables('lbSettings').sqlLBFE)]",
       "sqllbProbeID": "[resourceId('Microsoft.Network/loadBalancers/probes',variables('lbSettings').sqlLBName,variables('SQLAOProbe'))]"
     },
-    "SQL2012SP2-WS2012R2": "Enterprise",
-    "SQL2012SP3-WS2012R2": "Enterprise",
-    "SQL2014-WS2012R2": "Enterprise",
-    "SQL2014SP2-WS2012R2": "Enterprise",
-    "SQL2016-WS2012R2": "Enterprise",
-    "SQL2017-WS2016": "Enterprise",
-    "sql2019-ws2019": "Enterprise",
-    "sql2019-ws2022": "Enterprise",
-    "Monday": true,
-    "Tuesday": true,
-    "Wednesday": true,
-    "Thursday": true,
-    "Friday": true,
-    "Saturday": true,
-    "Sunday": true,
-    "Never": false,
-    "Everyday": true,
+    "sqlServerVersions": {
+      "SQL2012SP2-WS2012R2": "Enterprise",
+      "SQL2012SP3-WS2012R2": "Enterprise",
+      "SQL2014-WS2012R2": "Enterprise",
+      "SQL2014SP2-WS2012R2": "Enterprise",
+      "SQL2016-WS2012R2": "Enterprise",
+      "SQL2017-WS2016": "Enterprise",
+      "sql2019-ws2019": "Enterprise",
+      "sql2019-ws2022": "Enterprise"
+    },
+    "autoPatchingDays": {
+      "Monday": true,
+      "Tuesday": true,
+      "Wednesday": true,
+      "Thursday": true,
+      "Friday": true,
+      "Saturday": true,
+      "Sunday": true,
+      "Never": false,
+      "Everyday": true
+    },
     "subnets": [
       {
         "name": "[variables('subnetNames').staticSubnetName]",
@@ -609,7 +613,7 @@
             "value": "[variables('vmSettings').sqlImageOffer]"
           },
           "sqlImageSKU": {
-            "value": "[variables(parameters('sqlServerVersion'))]"
+            "value": "[variables('sqlServerVersions')[parameters('sqlServerVersion')]]"
           },
           "witnessVMSize": {
             "value": "[parameters('witnessVMSize')]"
@@ -938,7 +942,7 @@
             "value": "[parameters('autoPatchingStartHour')]"
           },
           "autoPatchingEnable": {
-            "value": "[variables(parameters('autoPatchingDay'))]"
+            "value": "[variables('autoPatchingDays')[parameters('autoPatchingDay')]]"
           },
           "numberOfDisks": {
             "value": "[parameters('numberOfSqlVMDisks')]"
@@ -1032,4 +1036,3 @@
   ],
   "outputs": {}
 }
-
