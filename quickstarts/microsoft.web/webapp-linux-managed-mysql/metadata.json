@@ -20,7 +20,7 @@
     "level": "beginner",
     "scenario": "Azure App Services",
     "roles": "Developer",
-    "learning": "https://docs.microsoft.com/en-us/learn/browse/?products=azure-virtual-machines&WT.mc_id=Portal-Microsoft_Azure_Education",
+    "learning": "https://learn.microsoft.com/training/browse/?products=azure-virtual-machines&WT.mc_id=portaledu_inproduct_template",
     "isA4EActive": "true",
     "usefulLink": [
             {
