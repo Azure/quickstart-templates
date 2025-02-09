@@ -101,7 +101,10 @@
       "sku": {
         "name": "[variables('storageAccountType')]"
       },
-      "kind": "StorageV2"
+      "kind": "StorageV2",
+      "properties": {
+        "minimumTlsVersion": "TLS1_2"
+      }
     },
     {
       "apiVersion": "2020-05-01",
