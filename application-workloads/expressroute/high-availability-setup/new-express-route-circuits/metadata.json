@@ -1,0 +1,9 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "itemDisplayName": "ExpressRoute high Availability ARM Templates",
+    "description": "ARM templates to deploy 2 ExpressRoute circuits for resilient setups.",
+    "summary": "ARM templates for deploying a set of circuits to be set up as high available/zone redundant, in order to achieve resiliency.",
+    "githubUsername": "nimaller",
+    "dateUpdated": "2024-09-26",
+    "type": "QuickStart"
+  }

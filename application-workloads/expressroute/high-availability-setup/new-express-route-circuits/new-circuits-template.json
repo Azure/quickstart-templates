@@ -1,0 +1,169 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "circuit1Location": {
+        "type": "string"
+      },
+      "circuit1Name": {
+        "type": "string"
+      },
+      "circuit1SkuTier": {
+        "type": "string"
+      },
+      "circuit1SkuFamily": {
+        "type": "string"
+      },
+      "circuit1BandwidthInMbps": {
+        "defaultValue": 1000,
+        "type": "int"
+      },
+      "circuit1ProviderName": {
+        "defaultValue": "",
+        "type": "string"
+      },
+      "circuit1PeeringLocation": {
+        "defaultValue": "",
+        "type": "string"
+      },
+      "circuit1BandwidthInGbps": {
+          "defaultValue": 1,
+          "type": "int"
+      },
+      "circuit1DirectId": {
+          "defaultValue": "",
+          "type": "string"
+      },
+      "circuit1DirectEnableRateLimiting": {
+          "defaultValue": false,
+          "type": "bool"
+      },
+      "circuit1Tags": {
+        "type": "object",
+        "defaultValue": {}
+      },
+      "circuit2Location": {
+        "type": "string"
+      },
+      "circuit2Name": {
+        "type": "string"
+      },
+      "circuit2SkuTier": {
+        "type": "string"
+      },
+      "circuit2SkuFamily": {
+        "type": "string"
+      },
+      "circuit2BandwidthInMbps": {
+        "defaultValue": 1000,
+        "type": "int"
+      },
+      "circuit2ProviderName": {
+        "defaultValue": "",
+        "type": "string"
+      },
+      "circuit2PeeringLocation": {
+        "defaultValue": "",
+        "type": "string"
+      },
+      "circuit2BandwidthInGbps": {
+          "defaultValue": 1,
+          "type": "int"
+      },
+      "circuit2DirectId": {
+          "defaultValue": "",
+          "type": "string"
+      },
+      "circuit2DirectEnableRateLimiting": {
+          "defaultValue": false,
+          "type": "bool"
+      },
+      "circuit2Tags": {
+        "type": "object",
+        "defaultValue": {}
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "apiVersion": "2023-06-01",
+        "name": "[parameters('circuit1Name')]",
+        "location": "[parameters('circuit1Location')]",
+        "sku": {
+          "name": "[concat(parameters('circuit1SkuTier'),'_', parameters('circuit1SkuFamily'))]",
+          "tier": "[parameters('circuit1SkuTier')]",
+          "family": "[parameters('circuit1SkuFamily')]"
+        },
+        "properties": {
+                "expressRoutePort": {
+                    "id": "[parameters('circuit1DirectId')]"
+                },
+                "enableDirectPortRateLimit": "[parameters('circuit1DirectEnableRateLimiting')]",
+                "bandwidthInGbps": "[parameters('circuit1BandwidthInGbps')]"
+        },
+        "tags": "[parameters('circuit1Tags')]",
+        "condition": "[not(empty(parameters('circuit1DirectId')))]"
+      },
+      {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "apiVersion": "2023-06-01",
+        "name": "[parameters('circuit1Name')]",
+        "location": "[parameters('circuit1Location')]",
+        "sku": {
+          "name": "[concat(parameters('circuit1SkuTier'),'_', parameters('circuit1SkuFamily'))]",
+          "tier": "[parameters('circuit1SkuTier')]",
+          "family": "[parameters('circuit1SkuFamily')]"
+        },
+        "properties": {
+          "serviceProviderProperties": {
+            "serviceProviderName": "[parameters('circuit1ProviderName')]",
+            "peeringLocation": "[parameters('circuit1PeeringLocation')]",
+            "bandwidthInMbps": "[parameters('circuit1BandwidthInMbps')]"
+          }
+        },
+        "tags": "[parameters('circuit1Tags')]",
+        "condition": "[empty(parameters('circuit1DirectId'))]"
+      },
+      {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "apiVersion": "2023-06-01",
+        "name": "[parameters('circuit2Name')]",
+        "location": "[parameters('circuit2Location')]",
+        "sku": {
+          "name": "[concat(parameters('circuit2SkuTier'),'_', parameters('circuit2SkuFamily'))]",
+          "tier": "[parameters('circuit2SkuTier')]",
+          "family": "[parameters('circuit2SkuFamily')]"
+        },
+        "properties": {
+                "expressRoutePort": {
+                    "id": "[parameters('circuit2DirectId')]"
+                },
+                "enableDirectPortRateLimit": "[parameters('circuit2DirectEnableRateLimiting')]",
+                "bandwidthInGbps": "[parameters('circuit2BandwidthInGbps')]"
+        },
+        "tags": "[parameters('circuit2Tags')]",
+        "condition": "[not(empty(parameters('circuit2DirectId')))]"
+      },
+      {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "apiVersion": "2023-06-01",
+        "name": "[parameters('circuit2Name')]",
+        "location": "[parameters('circuit2Location')]",
+        "sku": {
+          "name": "[concat(parameters('circuit2SkuTier'),'_', parameters('circuit2SkuFamily'))]",
+          "tier": "[parameters('circuit2SkuTier')]",
+          "family": "[parameters('circuit2SkuFamily')]"
+        },
+        "properties": {
+          "serviceProviderProperties": {
+            "serviceProviderName": "[parameters('circuit2ProviderName')]",
+            "peeringLocation": "[parameters('circuit2PeeringLocation')]",
+            "bandwidthInMbps": "[parameters('circuit2BandwidthInMbps')]"
+          }
+        },
+        "tags": "[parameters('circuit2Tags')]",
+        "condition": "[empty(parameters('circuit2DirectId'))]"
+      }
+    ]
+  }
+  
