@@ -35,7 +35,7 @@ var telemetryId = '00f120b5-2007-6120-0000-${workbookId}30126b006'
 var finOpsToolkitVersion = loadTextContent('ftkver.txt')
 
 // Add tags to all resources
-var resourceTags = union(tags, {
+var resourceTags = contains(tags, 'ftk-tool') ? tags : union(tags, {
     'ftk-version': finOpsToolkitVersion
     'ftk-tool': '${displayName} workbook'
   })
