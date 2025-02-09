@@ -4,6 +4,6 @@
   "description": "This template allows you to create a Linux-based HBase cluster in Azure HDInsight. ",
   "summary": "Deploy a Linux-based HBase cluster in Azure HDInsight",
   "githubUsername": "guyhay",
-  "dateUpdated": "2022-04-01",
+  "dateUpdated": "2024-04-04",
   "type": "QuickStart"
 }
