@@ -3,7 +3,7 @@
 # This script built for Ubuntu Server 16.04 LTS
 # You can customize variables such as MOUNTPOINT, RAIDCHUNKSIZE and so on to your needs.
 # You can also customize it to work with other Linux flavours and versions.
-# If you customize it, copy it to either Azure blob storage or Github so that Azure
+# If you customize it, copy it to either Azure blob storage or GitHub so that Azure
 # custom script Linux VM extension can access it, and specify its location in the
 # parameters of powershell script or runbook or Azure Resource Manager CRP template.
 
