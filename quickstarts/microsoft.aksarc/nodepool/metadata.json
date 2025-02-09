@@ -1,0 +1,10 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "Deploys a nodepool",
+    "description": "Deploys a nodepool on an existing provisioned cluster with workload identity federation enabled and OIDC issuer URL enabled on ASZ environment.",
+    "summary": "Create a nodepool instance using a template",
+    "githubUsername": "ReddyVanshika",
+    "docOwner": "ReddyVanshika",
+    "dateUpdated": "2024-11-15"
+  }

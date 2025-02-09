@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters" : {
+        "provisionedClusterName": {
+            "type": "string"
+        },
+        "agentName": {
+            "type": "string"
+        },
+        "agentVMSize": {
+            "type": "string"
+        },
+        "agentCount": {
+            "type": "int"
+        },
+        "agentOsType": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "resources" : [
+        {
+            "type": "Microsoft.Kubernetes/connectedClusters",
+            "apiVersion": "2024-01-01",
+            "name": "[parameters('provisionedClusterName')]",
+            "location": "[parameters('location')]",
+            "condition" : false
+        },
+        // {
+        //     "type": "Microsoft.HybridContainerService/provisionedClusterInstances",
+        //     "apiVersion": "2024-01-01",
+        //     "name": "[parameters('provisionedClusterName')]",
+        //     "location": "[parameters('location')]",
+        //     "condition" : false
+        // },
+        {
+            "type": "Microsoft.HybridContainerService/provisionedClusterInstances/agentPools",
+            "apiVersion": "2024-01-01",
+            "name": "[concat('default/', parameters('agentName'))]",
+            // "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('provisionedClusterName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('provisionedClusterName'))]"
+            ],
+            "properties": {
+                "count": "[parameters('agentCount')]",
+                "osType": "[parameters('agentOsType')]",
+                "vmSize": "[parameters('agentVMSize')]"
+            }
+        }
+    ]
+}
