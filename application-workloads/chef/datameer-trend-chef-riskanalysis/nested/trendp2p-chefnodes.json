@@ -181,7 +181,7 @@
     "baseUrl": {
       "type": "string",
       "metadata": {
-        "description": "Base public URL for the script. Most likely this will be your Github, Azure Blob or Dropbox URL"
+        "description": "Base public URL for the script. Most likely this will be your GitHub, Azure Blob or Dropbox URL"
       }
     },
     "datameerTags": {
