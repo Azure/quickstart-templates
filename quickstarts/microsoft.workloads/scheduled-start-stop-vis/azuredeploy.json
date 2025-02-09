@@ -1,0 +1,926 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "LogicAppName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SapOpsSchedule",
+      "metadata": {
+        "description": "The name of the logic app that creates start/stop schedule."
+      }
+    },
+    "SAPOperationType": {
+      "allowedValues": ["start", "stop"],
+      "type": "string",
+      "metadata": {
+        "allowedValues": ["start", "stop"],
+        "description": "Operation to be performed on SAP resource.",
+        "displayName": "SAP operation type",
+        "required": false
+      }
+    },
+    "IncludeDatabaseOperations": {
+      "type": "bool",
+      "metadata": {
+        "description": "Start/Stop the Database Instance",
+        "displayName": "Include Database instance",
+        "required": false
+      }
+    },
+    "SoftStopTimeout": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "required": false,
+        "displayName": "Soft stop timeout",
+        "description": "Soft stop timeout value, if this value is 0, hard stop will be triggered"
+      }
+    },
+    "VirtualInstanceForSAPSolutionsResourceID": {
+      "type": "array",
+      "defaultValue": [
+        "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/shubh-rg-1/providers/Microsoft.Workloads/sapVirtualInstances/S01",
+        "/subscriptions/49d64d54-e966-4c46-a868-1999802b762c/resourceGroups/shubh-rg-1/providers/Microsoft.Workloads/sapVirtualInstances/SS1"
+      ],
+      "metadata": {
+        "displayName": "Virtual Instance for SAP solutions Resource ID(s)",
+        "required": true
+      }
+    },
+    "Frequency": {
+      "allowedValues": ["Month", "Week", "Day"],
+      "type": "string",
+      "metadata": {
+        "allowedValues": ["Month", "Week", "Day"],
+        "description": "How often should schedule run. i.e. Weekly",
+        "displayName": "Frequency",
+        "placeholder": "How often does schedule run",
+        "required": false
+      }
+    },
+    "Interval": {
+      "type": "int"
+    },
+    "OnTheseDays": {
+      "type": "array",
+      "defaultValue": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "metadata": {
+        "description": "Remove the days in a week you want to skip the opeartion",
+        "required": false,
+        "displayName": "On these days"
+      }
+    },
+    "StartTime": {
+      "type": "string",
+      "metadata": {
+        "description": "Select start time to Power On SAP system",
+        "displayName": "Start Time",
+        "format": "timeFormat",
+        "required": false
+      }
+    },
+    "TimeZone": {
+      "allowedValues": ["Dateline Standard Time", "Pacific Standard Time"],
+      "type": "string",
+      "metadata": {
+        "allowedValues": ["Dateline Standard Time", "Pacific Standard Time"],
+        "description": "Select time zone for task schedule",
+        "displayName": "Time zone",
+        "placeholder": "Start VM at this specific time zone",
+        "required": true
+      }
+    },
+    "NotificationOn": {
+      "type": "string",
+      "allowedValues": ["Failure", "Both success and failure"],
+      "metadata": {
+        "description": "Notify me about task status when the task has failed/succedded",
+        "required": true
+      }
+    },
+    "EmailID": {
+      "type": "array",
+      "defaultValue": ["abc@abc.com", "bcd@bcd.com"],
+      "metadata": {
+        "description": "List of email addresses",
+        "displayName": "Email addresses",
+        "required": false
+      }
+    }
+  },
+  "variables": {
+    "office365ConnectionName": "[concat(parameters('location'),'-','office365')]",
+    "armConnectionName": "[concat(parameters('location'),'-','arm')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('LogicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2019-05-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', variables('armConnectionName'))]",
+        "[resourceId('Microsoft.Web/connections', variables('office365ConnectionName'))]"
+      ],
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            },
+            "ResourceName": {
+              "defaultValue": "[parameters('VirtualInstanceForSAPsolutionsResourceID')]",
+              "type": "array"
+            },
+            "OperationName": {
+              "defaultValue": "[parameters('SAPOperationType')]",
+              "type": "string"
+            },
+            "SoftStopTimeout": {
+              "defaultValue": "[parameters('SoftStopTimeout')]",
+              "type": "int"
+            },
+            "EmailAddresses": {
+              "defaultValue": "[parameters('EmailID')]",
+              "type": "array"
+            },
+            "IncludeDatabaseOperations": {
+              "defaultValue": "[parameters('IncludeDatabaseOperations')]",
+              "type": "bool"
+            },
+            "NotificationOn": {
+              "defaultValue": "[parameters('NotificationOn')]",
+              "type": "string"
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "recurrence": {
+                "frequency": "[parameters('Frequency')]",
+                "interval": "[parameters('Interval')]",
+                "startTime": "[parameters('StartTime')]",
+                "schedule": {
+                  "weekDays": "[parameters('OnTheseDays')]"
+                },
+                "timeZone": "[parameters('TimeZone')]"
+              },
+              "type": "Recurrence"
+            }
+          },
+          "actions": {
+            "Operation_Condition": {
+              "actions": {
+                "For_each_SID_start": {
+                  "actions": {
+                    "DB_Start_Operations": {
+                      "actions": {
+                        "For_each_DB_start": {
+                          "actions": {
+                            "Start_DB_Operation": {
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['arm']['connectionId']"
+                                  }
+                                },
+                                "method": "post",
+                                "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_start'), '/')[8],'/databaseinstances/',items('For_each_DB_start')?['name'])}/@{encodeURIComponent(parameters('OperationName'))}",
+                                "queries": {
+                                  "x-ms-api-version": "2023-04-01"
+                                }
+                              },
+                              "runAfter": {},
+                              "type": "ApiConnection"
+                            }
+                          },
+                          "foreach": "@body('Parse_JSON_DB_Start')?['value']",
+                          "runAfter": {
+                            "Parse_JSON_DB_Start": ["Succeeded"]
+                          },
+                          "type": "Foreach"
+                        },
+                        "Parse_JSON_DB_Start": {
+                          "inputs": {
+                            "content": "@body('Read_DB_start')",
+                            "schema": {
+                              "properties": {
+                                "value": {
+                                  "items": {
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "location": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "properties": {
+                                        "properties": {
+                                          "databaseSid": {
+                                            "type": "string"
+                                          },
+                                          "databaseType": {
+                                            "type": "string"
+                                          },
+                                          "ipAddress": {
+                                            "type": "string"
+                                          },
+                                          "loadBalancerDetails": {
+                                            "properties": {
+                                              "id": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "type": "object"
+                                          },
+                                          "provisioningState": {
+                                            "type": "string"
+                                          },
+                                          "status": {
+                                            "type": "string"
+                                          },
+                                          "subnet": {
+                                            "type": "string"
+                                          },
+                                          "vmDetails": {
+                                            "items": {
+                                              "properties": {
+                                                "status": {
+                                                  "type": "string"
+                                                },
+                                                "virtualMachineId": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "virtualMachineId",
+                                                "status"
+                                              ],
+                                              "type": "object"
+                                            },
+                                            "type": "array"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "systemData": {
+                                        "properties": {
+                                          "createdAt": {
+                                            "type": "string"
+                                          },
+                                          "createdBy": {
+                                            "type": "string"
+                                          },
+                                          "createdByType": {
+                                            "type": "string"
+                                          },
+                                          "lastModifiedAt": {
+                                            "type": "string"
+                                          },
+                                          "lastModifiedBy": {
+                                            "type": "string"
+                                          },
+                                          "lastModifiedByType": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "tags": {
+                                        "properties": {
+                                          "skipCleanup": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "type",
+                                      "location",
+                                      "tags",
+                                      "systemData",
+                                      "properties"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "runAfter": {
+                            "Read_DB_start": ["Succeeded"]
+                          },
+                          "type": "ParseJson"
+                        },
+                        "Read_DB_start": {
+                          "inputs": {
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['arm']['connectionId']"
+                              }
+                            },
+                            "method": "get",
+                            "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_start'), '/')[8],'/databaseInstances')}",
+                            "queries": {
+                              "x-ms-api-version": "2023-04-01"
+                            }
+                          },
+                          "runAfter": {},
+                          "type": "ApiConnection"
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@parameters('IncludeDatabaseOperations')",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "runAfter": {},
+                      "type": "If"
+                    },
+                    "Start_SAP_Operation": {
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['arm']['connectionId']"
+                          }
+                        },
+                        "method": "post",
+                        "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_start'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_start'), '/')[8])}/@{encodeURIComponent(parameters('OperationName'))}",
+                        "queries": {
+                          "x-ms-api-version": "2023-04-01"
+                        }
+                      },
+                      "runAfter": {
+                        "DB_Start_Operations": ["Succeeded"]
+                      },
+                      "type": "ApiConnection"
+                    },
+                    "Notify_Condition_Start": {
+                      "actions": {
+                        "Start_Success_Notification": {
+                          "actions": {
+                            "For_each_start_success": {
+                              "actions": {
+                                "Send_an_email_start_success": {
+                                  "inputs": {
+                                    "body": {
+                                      "Body": "<p>Status: Succeded<br>\nSID: @{split(items('For_each_SID_start'), '/')[8]}<br>\nResource ID: @{body('Parse_JSON_start')?['resourceId']}<br>\nStart Time: @{body('Parse_JSON_start')?['startTime']}<br>\nEnd Time: @{body('Parse_JSON_start')?['endTime']}</p>",
+                                      "Subject": "@{split(items('For_each_SID_start'), '/')[8]}  @{parameters('OperationName')} Success",
+                                      "To": "@{items('For_each_start_success')}"
+                                    },
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/Mail"
+                                  },
+                                  "runAfter": {},
+                                  "type": "ApiConnection"
+                                }
+                              },
+                              "foreach": "@parameters('EmailAddresses')",
+                              "runAfter": {},
+                              "type": "Foreach"
+                            }
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@parameters('NotificationOn')",
+                                  "Both success and failure"
+                                ]
+                              }
+                            ]
+                          },
+                          "runAfter": {},
+                          "type": "If"
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "for_each_email_start_failure": {
+                            "actions": {
+                              "Send_an_email_on_start_failure": {
+                                "inputs": {
+                                  "body": {
+                                    "Body": "<p><strong>Status: Failed<br>\n</strong>SID: @{split(items('For_each_SID_start'), '/')[8]}<br>\nResource ID: @{body('Parse_JSON_start')?['resourceId']}<br>\nStart Time: @{body('Parse_JSON_start')?['startTime']}<br>\nEnd Time: @{body('Parse_JSON_start')?['endTime']}<br>\nError Code: @{body('Parse_JSON_start')?['error']?['code']}<br>\nError Message: @{body('Parse_JSON_start')?['error']?['message']}<br>\n<br>\n</p>",
+                                    "Subject": "@{split(items('For_each_SID_start'), '/')[8]} @{parameters('OperationName')} Failed",
+                                    "To": "@{items('for_each_email_start_failure')}"
+                                  },
+                                  "host": {
+                                    "connection": {
+                                      "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                  },
+                                  "method": "post",
+                                  "path": "/v2/Mail"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                              }
+                            },
+                            "foreach": "@parameters('EmailAddresses')",
+                            "runAfter": {},
+                            "type": "Foreach"
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@body('Parse_JSON_start')?['status']",
+                              "Succeeded"
+                            ]
+                          }
+                        ]
+                      },
+                      "runAfter": {
+                        "Parse_JSON_start": ["Succeeded"]
+                      },
+                      "type": "If"
+                    },
+                    "Parse_JSON_start": {
+                      "inputs": {
+                        "content": "@body('Start_SAP_Operation')",
+                        "schema": {
+                          "properties": {
+                            "endTime": {
+                              "type": "string"
+                            },
+                            "error": {
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "message": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "resourceId": {
+                              "type": "string"
+                            },
+                            "startTime": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "runAfter": {
+                        "Start_SAP_Operation": ["Succeeded"]
+                      },
+                      "type": "ParseJson"
+                    }
+                  },
+                  "foreach": "@parameters('ResourceName')",
+                  "runAfter": {},
+                  "type": "Foreach"
+                }
+              },
+              "else": {
+                "actions": {
+                  "For_each_SID_stop": {
+                    "actions": {
+                      "DB_Stop_Operation": {
+                        "actions": {
+                          "For_each_DB_Stop": {
+                            "actions": {
+                              "Stop_DB_Operation": {
+                                "inputs": {
+                                  "host": {
+                                    "connection": {
+                                      "name": "@parameters('$connections')['arm']['connectionId']"
+                                    }
+                                  },
+                                  "method": "post",
+                                  "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_stop'), '/')[8],'/databaseinstances/',items('For_each_DB_Stop')?['name'])}/@{encodeURIComponent(parameters('OperationName'))}",
+                                  "queries": {
+                                    "x-ms-api-version": "2023-04-01"
+                                  }
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                              }
+                            },
+                            "foreach": "@body('Parse_JSON_DB_Stop')?['value']",
+                            "runAfter": {
+                              "Parse_JSON_DB_Stop": ["Succeeded"]
+                            },
+                            "type": "Foreach"
+                          },
+                          "Parse_JSON_DB_Stop": {
+                            "inputs": {
+                              "content": "@body('Read_DB_stop')",
+                              "schema": {
+                                "properties": {
+                                  "value": {
+                                    "items": {
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "location": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "properties": {
+                                          "properties": {
+                                            "databaseSid": {
+                                              "type": "string"
+                                            },
+                                            "databaseType": {
+                                              "type": "string"
+                                            },
+                                            "ipAddress": {
+                                              "type": "string"
+                                            },
+                                            "loadBalancerDetails": {
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "type": "object"
+                                            },
+                                            "provisioningState": {
+                                              "type": "string"
+                                            },
+                                            "status": {
+                                              "type": "string"
+                                            },
+                                            "subnet": {
+                                              "type": "string"
+                                            },
+                                            "vmDetails": {
+                                              "items": {
+                                                "properties": {
+                                                  "status": {
+                                                    "type": "string"
+                                                  },
+                                                  "virtualMachineId": {
+                                                    "type": "string"
+                                                  }
+                                                },
+                                                "required": [
+                                                  "virtualMachineId",
+                                                  "status"
+                                                ],
+                                                "type": "object"
+                                              },
+                                              "type": "array"
+                                            }
+                                          },
+                                          "type": "object"
+                                        },
+                                        "systemData": {
+                                          "properties": {
+                                            "createdAt": {
+                                              "type": "string"
+                                            },
+                                            "createdBy": {
+                                              "type": "string"
+                                            },
+                                            "createdByType": {
+                                              "type": "string"
+                                            },
+                                            "lastModifiedAt": {
+                                              "type": "string"
+                                            },
+                                            "lastModifiedBy": {
+                                              "type": "string"
+                                            },
+                                            "lastModifiedByType": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "type": "object"
+                                        },
+                                        "tags": {
+                                          "properties": {
+                                            "skipCleanup": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "type": "object"
+                                        },
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "name",
+                                        "type",
+                                        "location",
+                                        "tags",
+                                        "systemData",
+                                        "properties"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              }
+                            },
+                            "runAfter": {
+                              "Read_DB_stop": ["Succeeded"]
+                            },
+                            "type": "ParseJson"
+                          },
+                          "Read_DB_stop": {
+                            "inputs": {
+                              "host": {
+                                "connection": {
+                                  "name": "@parameters('$connections')['arm']['connectionId']"
+                                }
+                              },
+                              "method": "get",
+                              "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_stop'), '/')[8],'/databaseInstances')}",
+                              "queries": {
+                                "x-ms-api-version": "2023-04-01"
+                              }
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                          }
+                        },
+                        "expression": {
+                          "and": [
+                            {
+                              "equals": [
+                                "@parameters('IncludeDatabaseOperations')",
+                                true
+                              ]
+                            }
+                          ]
+                        },
+                        "runAfter": {
+                          "Stop_SAP_Operation": ["Succeeded"]
+                        },
+                        "type": "If"
+                      },
+                      "Stop_SAP_Operation": {
+                        "inputs": {
+                          "host": {
+                            "connection": {
+                              "name": "@parameters('$connections')['arm']['connectionId']"
+                            }
+                          },
+                          "method": "post",
+                          "path": "/subscriptions/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[2])}/resourcegroups/@{encodeURIComponent(split(items('For_each_SID_stop'), '/')[4])}/providers/@{encodeURIComponent('Microsoft.Workloads')}/@{encodeURIComponent('sapVirtualInstances/',split(items('For_each_SID_stop'), '/')[8])}/@{encodeURIComponent(parameters('OperationName'))}",
+                          "queries": {
+                            "x-ms-api-version": "2023-04-01"
+                          }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                      },
+                      "Notify_Condition_Stop": {
+                        "actions": {
+                          "Stop_Success_Notification": {
+                            "actions": {
+                              "For_each_email_stop_success": {
+                                "actions": {
+                                  "Send_an_email_stop_success": {
+                                    "inputs": {
+                                      "body": {
+                                        "Body": "<p>Status: Succeded<br>\nSID: @{split(items('For_each_SID_stop'), '/')[8]}<br>\nResource ID: @{body('Parse_JSON_stop')?['resourceId']}<br>\nStart Time: @{body('Parse_JSON_stop')?['startTime']}<br>\nEnd Time: @{body('Parse_JSON_stop')?['endTime']}</p>",
+                                        "Subject": "@{split(items('For_each_SID_stop'), '/')[8]}  @{parameters('OperationName')} Success",
+                                        "To": "@{items('For_each_email_stop_success')}"
+                                      },
+                                      "host": {
+                                        "connection": {
+                                          "name": "@parameters('$connections')['office365']['connectionId']"
+                                        }
+                                      },
+                                      "method": "post",
+                                      "path": "/v2/Mail"
+                                    },
+                                    "runAfter": {},
+                                    "type": "ApiConnection"
+                                  }
+                                },
+                                "foreach": "@parameters('EmailAddresses')",
+                                "runAfter": {},
+                                "type": "Foreach"
+                              }
+                            },
+                            "expression": {
+                              "and": [
+                                {
+                                  "equals": [
+                                    "@parameters('NotificationOn')",
+                                    "Both success and failure"
+                                  ]
+                                }
+                              ]
+                            },
+                            "runAfter": {},
+                            "type": "If"
+                          }
+                        },
+                        "else": {
+                          "actions": {
+                            "For_each_email_stop_failure": {
+                              "actions": {
+                                "Send_an_email_on_stop_failure": {
+                                  "inputs": {
+                                    "body": {
+                                      "Body": "<p><strong>Status: Failed<br>\n</strong>SID: @{split(items('For_each_SID_stop'), '/')[8]}<br>\nResource ID: @{body('Parse_JSON_stop')?['resourceId']}<br>\nStart Time: @{body('Parse_JSON_stop')?['startTime']}<br>\nEnd Time: @{body('Parse_JSON_stop')?['endTime']}<br>\nError Code: @{body('Parse_JSON_stop')?['error']?['code']}<br>\nError Message: @{body('Parse_JSON_stop')?['error']?['message']}<br>\n<br>\n</p>",
+                                      "Subject": "@{split(items('For_each_SID_stop'), '/')[8]} @{parameters('OperationName')} Failed",
+                                      "To": "@{items('For_each_email_stop_failure')}"
+                                    },
+                                    "host": {
+                                      "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                      }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/Mail"
+                                  },
+                                  "runAfter": {},
+                                  "type": "ApiConnection"
+                                }
+                              },
+                              "foreach": "@parameters('EmailAddresses')",
+                              "runAfter": {},
+                              "type": "Foreach"
+                            }
+                          }
+                        },
+                        "expression": {
+                          "and": [
+                            {
+                              "equals": [
+                                "@body('Parse_JSON_stop')?['status']",
+                                "Succeeded"
+                              ]
+                            }
+                          ]
+                        },
+                        "runAfter": {
+                          "Parse_JSON_stop": ["Succeeded"]
+                        },
+                        "type": "If"
+                      },
+                      "Parse_JSON_stop": {
+                        "inputs": {
+                          "content": "@body('Stop_SAP_Operation')",
+                          "schema": {
+                            "properties": {
+                              "endTime": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "resourceId": {
+                                "type": "string"
+                              },
+                              "startTime": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          }
+                        },
+                        "runAfter": {
+                          "DB_Stop_Operation": ["Succeeded"]
+                        },
+                        "type": "ParseJson"
+                      }
+                    },
+                    "foreach": "@parameters('ResourceName')",
+                    "runAfter": {},
+                    "type": "Foreach"
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": ["@parameters('OperationName')", "start"]
+                  }
+                ]
+              },
+              "runAfter": {},
+              "type": "If"
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "arm": {
+                "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('location'), 'arm')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', variables('armConnectionName'))]",
+                "connectionName": "variables('armConnectionName')"
+              },
+              "office365": {
+                "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('location'), 'office365')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections',  variables('office365ConnectionName'))]",
+                "connectionName": "variables('office365ConnectionName')"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[variables('office365ConnectionName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('location'), 'office365')]"
+        },
+        "displayName": "office365"
+      }
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('armConnectionName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('location'), 'arm')]"
+        },
+        "displayName": "arm"
+      }
+    }
+  ]
+}
