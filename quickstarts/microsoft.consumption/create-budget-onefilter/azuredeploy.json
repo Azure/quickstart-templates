@@ -38,7 +38,7 @@
     "startDate": {
       "type": "string",
       "metadata": {
-        "description": "The start date must be first of the month in YYYY-MM-DD format. Future start date should not be more than three months. Past start date should be selected within the timegrain preiod."
+        "description": "The start date must be first of the month in YYYY-MM-DD format. Future start date should not be more than three months. Past start date should be selected within the timegrain period."
       }
     },
     "endDate": {
