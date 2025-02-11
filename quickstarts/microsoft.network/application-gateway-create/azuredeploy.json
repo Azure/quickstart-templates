@@ -36,19 +36,7 @@
         "description": "Application Gateway name"
       }
     },
-    "applicationGatewaySize": {
-      "type": "string",
-      "allowedValues": [
-        "Standard_Small",
-        "Standard_Medium",
-        "Standard_Large"
-      ],
-      "defaultValue": "Standard_Small",
-      "metadata": {
-        "description": "Application Gateway size"
-      }
-    },
-    "applicationGatewayInstanceCount": {
+     "applicationGatewayInstanceCount": {
       "type": "int",
       "allowedValues": [
         1,
@@ -115,9 +103,24 @@
     }
   },
   "variables": {
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
+    "publicIPAddressName": "public_ip"
   },
   "resources": [
+    {
+      "apiVersion": "2023-09-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4
+      }
+    },
     {
       "apiVersion": "2020-05-01",
       "type": "Microsoft.Network/virtualNetworks",
@@ -140,7 +143,7 @@
       }
     },
     {
-      "apiVersion": "2020-05-01",
+      "apiVersion": "2023-09-01",
       "name": "[parameters('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "location": "[parameters('location')]",
@@ -149,8 +152,8 @@
       ],
       "properties": {
         "sku": {
-          "name": "[parameters('applicationGatewaySize')]",
-          "tier": "Standard",
+          "name": "Standard_v2",
+          "tier": "Standard_v2",
           "capacity": "[parameters('applicationGatewayInstanceCount')]"
         },
         "gatewayIPConfigurations": [
@@ -167,8 +170,9 @@
           {
             "name": "appGatewayFrontendIP",
             "properties": {
-              "subnet": {
-                "id": "[variables('subnetRef')]"
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
               }
             }
           }
@@ -218,6 +222,7 @@
             "Name": "rule1",
             "properties": {
               "RuleType": "Basic",
+              "priority": 1,
               "httpListener": {
                 "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', parameters('applicationGatewayName'), 'appGatewayHttpListener')]"
               },

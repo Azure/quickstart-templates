@@ -17,10 +17,7 @@
     "applicationGatewayName": {
       "value": "GEN-UNIQUE"
     },
-    "applicationGatewaySize": {
-      "value": "Standard_Small"
-    },
-    "applicationGatewayInstanceCount": {
+     "applicationGatewayInstanceCount": {
       "value": 1
     },
     "frontendPort": {
