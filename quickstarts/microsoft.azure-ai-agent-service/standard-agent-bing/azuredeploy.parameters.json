@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "aiHubName": {
+        "value": "hub-demo"
+      },
+      "aiHubFriendlyName": {
+        "value": "Agents Hub resource"
+      },
+      "aiHubDescription": {
+        "value": "This is an example AI resource for use in Azure AI Studio."
+      },
+      "aiProjectName": {
+        "value": "project-demo"
+      },
+      "aiProjectFriendlyName": {
+        "value": "Agents Project resource"
+      },
+      "aiProjectDescription": {
+        "value": "This is an example AI Project resource for use in Azure AI Studio."
+      },
+      "tags": {
+        "value": {}
+      },
+      "aiSearchName": {
+        "value": "agent-ai-search"
+      },
+      "capabilityHostName": {
+        "value": "caphost1"
+      },
+      "storageName": {
+        "value": "agent-storage"
+      },
+      "aiServicesName": {
+        "value": "agent-ai-services"
+      },
+      "modelName": {
+        "value": "gpt-4o-mini"
+      },
+      "modelFormat": {
+        "value": "OpenAI"
+      },
+      "modelVersion": {
+        "value": "2024-07-18"
+      },
+      "modelSkuName": {
+        "value": "GlobalStandard"
+      },
+      "modelCapacity": {
+        "value": 50
+      },
+      "modelLocation": {
+        "value": "eastus"
+      },
+      "aiServiceAccountResourceId": {
+        "value": ""
+      },
+      "aiSearchServiceResourceId": {
+        "value": ""
+      },
+      "aiStorageAccountResourceId":{
+        "value": ""
+      },
+      "bingSearchResourceID" : {
+        "value": ""
+      },
+      "bingName" : {
+        "value": "agent-bing-search"
+      }
+    }
+  }

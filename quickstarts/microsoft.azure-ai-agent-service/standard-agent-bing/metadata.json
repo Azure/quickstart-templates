@@ -1,0 +1,12 @@
+{
+    "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+    "type": "QuickStart",
+    "itemDisplayName": "Standard Agent Setup with Bing",
+    "description": "This set of templates demonstrates how to set up Azure AI Agent Service with the standard setup and bing, meaning with managed identity authentication and public internet access enabled. Agents use customer-owned, single-tenant search and storage resources. With this setup, you have full control and visibility over these resources, but you will incur costs based on your usage.",
+    "summary": "This set of templates demonstrates how to use Azure AI Agent Service with the standard setup and bing.",
+    "githubUsername": "fosteramanda",
+    "dateUpdated": "2024-12-06",
+    "environments": [
+      "AzureCloud"
+    ]
+  }
