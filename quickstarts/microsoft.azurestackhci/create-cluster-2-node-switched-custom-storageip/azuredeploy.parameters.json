@@ -47,15 +47,6 @@
         "AzureStackLCMAdminPasssword": {
             "value": null
         },
-        "arbDeploymentAppID": {
-            "value": ""
-        },
-        "arbDeploymentAppSecret": {
-            "value": null
-        },
-        "arbDeploymentSPNObjectID": {
-            "value": ""
-        },
         "hciResourceProviderObjectID": {
             "value": ""
         },
