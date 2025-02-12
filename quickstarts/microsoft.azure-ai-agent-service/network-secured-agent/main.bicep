@@ -1,9 +1,31 @@
-// Existing Resource Overrides
-var storageOverride = ''
-var keyVaultOverride = ''
-var aiServicesOverride = ''
-var aiSearchOverride = ''
-var userAssignedIdentityOverride = ''
+/*
+Network-Secured Agent Architecture Overview
+-----------------------------------------
+This template deploys an AI agent infrastructure in a network-secured configuration:
+
+1. Network Security:
+   - All services are deployed with private endpoints
+   - Access is restricted through VNet integration
+   - Private DNS zones manage internal name resolution
+
+2. Key Network Components:
+   - Virtual Network: Isolated network environment for all resources
+   - Subnets: Segregated network spaces for different service types
+   - Private Endpoints: Secure access points for Azure services
+   - Private DNS Zones: Internal name resolution for private endpoints
+
+3. Security Design:
+   - No public internet exposure for core services
+   - Network isolation between components
+   - Managed identity for secure authentication
+*/
+
+// Existing Resource Overrides - Used when connecting to pre-existing resources
+var storageOverride = ''        // Override for existing storage account
+var keyVaultOverride = ''       // Override for existing Key Vault
+var aiServicesOverride = ''     // Override for existing AI Services
+var aiSearchOverride = ''       // Override for existing AI Search
+var userAssignedIdentityOverride = '' // Override for existing managed identity
 
 /* ---------------------------------- Deployment Identifiers ---------------------------------- */
 
@@ -70,8 +92,10 @@ param modelSkuName string = 'GlobalStandard'
 param modelCapacity int = 50
 
 @description('Model deployment location. If you want to deploy an Azure AI resource/model in different location than the rest of the resources created.')
-param modelLocation string = 'westus2'
+param modelLocation string = 'eastus'
 
+@description('AI service kind, values can be "OpenAI" or "AIService"')
+param aisKind string = 'OpenAI'
 
 /* ---------------------------------- Create User Assigned Identity ---------------------------------- */
 
@@ -108,6 +132,7 @@ module aiDependencies 'modules-network-secured/network-secured-dependent-resourc
     aiSearchName: aiSearchName
     tags: tags
     location: location
+    aisKind: aisKind
 
     aiServicesExists: aiServicesOverride != ''
     aiSearchExists: aiSearchOverride != ''
@@ -171,21 +196,30 @@ resource aiSearch 'Microsoft.Search/searchServices@2023-11-01' existing = {
   scope: resourceGroup(aiDependencies.outputs.aiSearchServiceSubscriptionId, aiDependencies.outputs.aiSearchServiceResourceGroupName)
 }
 
+// Private Endpoint and DNS Configuration
+// This module sets up private network access for all Azure services:
+// 1. Creates private endpoints in the specified subnet
+// 2. Sets up private DNS zones for each service:
+//    - privatelink.search.windows.net for AI Search
+//    - privatelink.cognitiveservices.azure.com for AI Services
+//    - privatelink.blob.core.windows.net for Storage
+// 3. Links private DNS zones to the VNet for name resolution
+// 4. Configures network policies to restrict access to private endpoints only
 module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.bicep' = {
   name: '${name}-${uniqueSuffix}--private-endpoint'
   params: {
-    aiServicesName: aiDependencies.outputs.aiServicesName
-    aiSearchName: aiDependencies.outputs.aiSearchName
-    aiStorageId: aiDependencies.outputs.storageId
-    storageName: storageNameClean
-    vnetName: aiDependencies.outputs.virtualNetworkName
-    cxSubnetName: aiDependencies.outputs.cxSubnetName
-    suffix: uniqueSuffix
+    aiServicesName: aiDependencies.outputs.aiServicesName    // AI Services to secure
+    aiSearchName: aiDependencies.outputs.aiSearchName        // AI Search to secure
+    aiStorageId: aiDependencies.outputs.storageId           // Storage to secure
+    storageName: storageNameClean                           // Clean storage name for DNS
+    vnetName: aiDependencies.outputs.virtualNetworkName     // VNet containing subnets
+    cxSubnetName: aiDependencies.outputs.cxSubnetName       // Subnet for private endpoints
+    suffix: uniqueSuffix                                    // Unique identifier
   }
   dependsOn: [
-    aiServices
-    aiSearch
-    storage
+    aiServices    // Ensure AI Services exist
+    aiSearch      // Ensure AI Search exists
+    storage       // Ensure Storage exists
   ]
 }
 

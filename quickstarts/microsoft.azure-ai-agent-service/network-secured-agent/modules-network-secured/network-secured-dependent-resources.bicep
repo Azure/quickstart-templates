@@ -1,4 +1,23 @@
-// Creates Azure dependent resources for Azure AI studio
+/*
+Network-Secured Dependencies Module
+---------------------------------
+This module deploys core infrastructure components with network security controls:
+
+1. Virtual Network Architecture:
+   - Address space: 172.16.0.0/16
+   - Customer Hub subnet: 172.16.0.0/24 (for private endpoints)
+   - Agents subnet: 172.16.101.0/24 (for container apps)
+
+2. Network Security Features:
+   - Service endpoints for secure Azure service access
+   - Network ACLs to restrict access
+   - Private endpoints for secure communication
+   - Disabled public network access
+
+3. Subnet Configuration:
+   - Customer Hub subnet: Hosts private endpoints and service endpoints
+   - Agents subnet: Delegated to container apps with specific CIDR range
+*/
 
 param storageExists bool = false
 param keyvaultExists bool = false
@@ -11,7 +30,7 @@ param location string = resourceGroup().location
 @description('Tags to add to the resources')
 param tags object = {}
 
-@description('Tags to add to the resources')
+@description('Unique suffix for resource names')
 param suffix string
 
 @description('AI services name')
@@ -44,43 +63,49 @@ param modelCapacity int
 @description('Model/AI Resource deployment location')
 param modelLocation string 
 
+@description('The Kind of AI Service, can be "OpenAI" or "AIService"')
+param aisKind string
+
+// Network Resource Names
 @description('The name of the virtual network')
 param vnetName string = 'agents-vnet-${suffix}'
 
-@description('The name of Agents Subnet')
+@description('The name of Agents Subnet for container apps')
 param agentsSubnetName string = 'agents-subnet-${suffix}'
 
-@description('The name of Customer Hub subnet')
+@description('The name of Customer Hub subnet for private endpoints')
 param cxSubnetName string = 'hub-subnet-${suffix}'
 
 param userAssignedIdentityName string
 
+// Subnet reference variables for network rules
 var cxSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, cxSubnetName)
 var agentSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, agentsSubnetName)
 
+// User-assigned managed identity for secure access
 resource uai 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
   name: userAssignedIdentityName
 }
 
-/* -------------------------------------------- Create VNet Resources -------------------------------------------- */
+/* -------------------------------------------- Virtual Network Resources -------------------------------------------- */
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworks?pivots=deployment-language-bicep
+// Virtual Network with segregated subnets and security controls
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
   name: vnetName
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        '172.16.0.0/16'
+        '172.16.0.0/16'    // Main VNet CIDR
       ]
     }
     subnets: [
       {
         name: cxSubnetName
         properties: {
-          addressPrefix: '172.16.0.0/24'
-          serviceEndpoints: [
+          addressPrefix: '172.16.0.0/24'    // Customer Hub subnet CIDR
+          serviceEndpoints: [               // Secure service access
             {
               service: 'Microsoft.KeyVault'
               locations: [
@@ -105,7 +130,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
       {
         name: agentsSubnetName
         properties: {
-          addressPrefix: '172.16.101.0/24'
+          addressPrefix: '172.16.101.0/24'  // Agents subnet CIDR
           delegations: [
             {
               name: 'Microsoft.app/environments'
@@ -123,7 +148,8 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
   ]
 }
 
-/* -------------------------------------------- Fetch Existing Resources And Connect to Vnet -------------------------------------------- */
+/* -------------------------------------------- Existing Resource References -------------------------------------------- */
+
 resource existingStorage 'Microsoft.Storage/storageAccounts@2022-05-01' existing = if(storageExists) {
   name: storageName
   scope: resourceGroup()
@@ -144,7 +170,9 @@ resource existingAiSearch 'Microsoft.CognitiveServices/accounts@2024-06-01-previ
   scope: resourceGroup()
 }
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.keyvault/vaults?pivots=deployment-language-bicep
+/* -------------------------------------------- Network-Secured Resources -------------------------------------------- */
+
+// Key Vault with network security controls
 resource defaultKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' = if(!keyvaultExists) {
   name: keyvaultName
   location: location
@@ -157,7 +185,7 @@ resource defaultKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' = if(!keyvaultEx
     enableSoftDelete: true
     enableRbacAuthorization: true
     enablePurgeProtection: true
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Disabled'        // Block public access
     accessPolicies: [
       {
         tenantId: subscription().tenantId
@@ -166,9 +194,9 @@ resource defaultKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' = if(!keyvaultEx
       }
     ]
     networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-      virtualNetworkRules:[
+      bypass: 'AzureServices'              // Allow trusted Azure services
+      defaultAction: 'Deny'                // Deny all other traffic
+      virtualNetworkRules:[                // Allow access from customer hub subnet
         {
           id: virtualNetwork.properties.subnets[0].id
         }
@@ -183,14 +211,14 @@ resource defaultKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' = if(!keyvaultEx
   }
 }
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.cognitiveservices/accounts?pivots=deployment-language-bicep
+// AI Services with network security controls
 resource defaultAiServices 'Microsoft.CognitiveServices/accounts@2024-06-01-preview' = if(!aiServicesExists) {
   name: aiServicesName
   location: modelLocation
   sku: {
     name: 'S0'
   }
-  kind: 'AIServices' // or 'OpenAI'
+  kind: aisKind
   identity: {
     type: 'SystemAssigned'
   }
@@ -200,19 +228,19 @@ resource defaultAiServices 'Microsoft.CognitiveServices/accounts@2024-06-01-prev
       statisticsEnabled: false
     }
     networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-      virtualNetworkRules:[
+      bypass: 'AzureServices'              // Allow trusted Azure services
+      defaultAction: 'Deny'                // Deny all other traffic
+      virtualNetworkRules:[                // Allow access from customer hub subnet
         {
           id: virtualNetwork.properties.subnets[0].id
         }
       ]
     }
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Disabled'        // Block public access
   }
 }
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.cognitiveservices/accounts/deployments?pivots=deployment-language-bicep
+// AI Model deployment
 resource defaultModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-06-01-preview'= if(!aiServicesExists){
   parent: defaultAiServices
   name: modelName
@@ -229,7 +257,7 @@ resource defaultModelDeployment 'Microsoft.CognitiveServices/accounts/deployment
   }
 }
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep
+// AI Search with network security controls
 resource defaultAiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = if(!aiSearchExists) {
   name: aiSearchName
   location: location
@@ -242,13 +270,13 @@ resource defaultAiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = 
   }
   properties: {
     disableLocalAuth: false
-    authOptions: { aadOrApiKey: { aadAuthFailureMode: 'http401WithBearerChallenge'}}
+    authOptions: { aadOrApiKey: { aadAuthFailureMode: 'http401WithBearerChallenge' }}
     encryptionWithCmk: {
       enforcement: 'Unspecified'
     }
     hostingMode: 'default'
     partitionCount: 1
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Disabled'        // Block public access
     replicaCount: 1
     semanticSearch: 'disabled'
   }
@@ -257,36 +285,37 @@ resource defaultAiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = 
   }
 }
 
-// Some regions doesn't support Standard Zone-Redundant storage, need to use Geo-redundant storage
+// Storage Account with network security controls
 param noZRSRegions array = ['southindia', 'westus']
 param sku object = contains(noZRSRegions, location) ? { name: 'Standard_GRS' } : { name: 'Standard_ZRS' }
 var storageNameCleaned = storageExists ? existingStorage.name : replace(storageName, '-', '')
 
-// Documentation: https://learn.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts?pivots=deployment-language-bicep
 resource defaultStorage 'Microsoft.Storage/storageAccounts@2022-05-01' = if(!storageExists){
   name: storageNameCleaned
   location: location
   kind: 'StorageV2'
   sku: sku
   properties: {
-    minimumTlsVersion: 'TLS1_2'
-    allowBlobPublicAccess: false
-    publicNetworkAccess: 'Disabled'
+    minimumTlsVersion: 'TLS1_2'           // Enforce TLS 1.2
+    allowBlobPublicAccess: false          // Prevent public blob access
+    publicNetworkAccess: 'Disabled'        // Block public access
     networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-      virtualNetworkRules: [
+      bypass: 'AzureServices'              // Allow trusted Azure services
+      defaultAction: 'Deny'                // Deny all other traffic
+      virtualNetworkRules: [               // Allow access from customer hub subnet
         {
           id: cxSubnetRef
         }
       ]
     }
-    allowSharedKeyAccess: false
+    allowSharedKeyAccess: false           // Enforce Azure AD authentication
   }
   dependsOn: [
     virtualNetwork
   ]
 }
+
+/* -------------------------------------------- Role Assignments -------------------------------------------- */
 
 module storageAccessAssignment './storage-role-assignments.bicep' = if(!storageExists){
   name: 'dependencies-${suffix}-storage-rbac'
@@ -327,6 +356,7 @@ module aiSearchAccessAssignment 'ai-search-role-assignments.bicep' = if(!aiSearc
   dependsOn: [ defaultAiSearch ]
 }
 
+/* -------------------------------------------- Output Variables -------------------------------------------- */
 
 var aiServiceParts = aiServicesExists ? split(existingAiServices.id, '/') : split(defaultAiServices.id, '/')
 var acsParts = aiSearchExists ? split(existingAiSearch.id, '/') : split(defaultAiSearch.id, '/')
