@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "type": "QuickStart",
+  "itemDisplayName": "creates an Azure Stack HCI 23H2 cluster",
+  "description": "This template creates an Azure Stack HCI 23H2 cluster using an ARM template.",
+  "summary": "This template creates an Azure Stack HCI 23H2 cluster using an ARM template.",
+  "githubUsername": "troettinger",
+  "validationType": "Manual",
+  "dateUpdated": "2025-01-21"
+}

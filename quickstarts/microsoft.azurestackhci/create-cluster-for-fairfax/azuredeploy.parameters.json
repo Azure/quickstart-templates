@@ -1,0 +1,231 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentMode": {
+            "value": "Validate"
+        },
+        "keyVaultName": {
+            "value": "armdeploykv"
+        },
+        "createNewKeyVault":{ 
+            "value": true
+        },
+        "softDeleteRetentionDays": {
+            "value": 30
+        },
+        "diagnosticStorageAccountName": {
+            "value": "partnerdiagsa3"
+        },
+        "logsRetentionInDays": {
+            "value": 30
+        },
+        "storageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "clusterName": {
+            "value": "cluster1"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "tenantId": {
+            "value": ""
+        },
+        "apiVersion":{
+            "value": "2024-09-01"
+        },
+        "witnessType": {
+            "value": "Cloud"
+        },
+        "clusterWitnessStorageAccountName": {
+            "value": "cluster1witnessthoroet"
+        },
+        "localAdminUserName": {
+            "value": "administrator"
+        },
+        "localAdminPassword": {
+            "value": null
+        },
+        "AzureStackLCMAdminUsername": {
+            "value": "lcmuser"
+        },
+        "AzureStackLCMAdminPasssword": {
+            "value": null
+        },
+        "arbDeploymentAppID": {
+            "value": ""
+        },
+        "arbDeploymentAppSecret": {
+            "value": null
+        },
+        "arbDeploymentSPNObjectID": {
+            "value": ""
+        },
+        "hciResourceProviderObjectID": {
+            "value": ""
+        },
+        "arcNodeResourceIds": {
+            "value": [
+                "/subscriptions/86a43cee-777a-4d3e-b9bc-80d6a9c6c73c/resourceGroups/ARMRG/providers/Microsoft.HybridCompute/machines/vhost1"
+            ]
+        },
+        "domainFqdn": {
+            "value": "s31r1501.masd.stbtest.microsoft.com"
+        },
+        "namingPrefix": {
+            "value": "HCI002"
+        },
+        "adouPath": {
+            "value": "OU=HCI002,DC=s31r1501,DC=masd,DC=stbtest,DC=microsoft,DC=com"
+        },
+        "securityLevel": {
+            "value": "Recommended"
+        },
+        "driftControlEnforced": {
+            "value": true
+        },
+        "credentialGuardEnforced": {
+            "value": true
+        },
+        "smbSigningEnforced": {
+            "value": true
+        },
+        "smbClusterEncryption": {
+            "value": false
+        },
+        "bitlockerBootVolume": {
+            "value": true
+        },
+        "bitlockerDataVolumes": {
+            "value": true
+        },
+        "wdacEnforced": {
+            "value": true
+        },
+        "streamingDataClient": {
+            "value": true
+        },
+        "euLocation": {
+            "value": false
+        },
+        "episodicDataUpload": {
+            "value": true
+        },
+        "configurationMode": {
+            "value": "Express"
+        },
+        "subnetMask": {
+            "value": "255.255.255.0"
+        },
+        "defaultGateway": {
+            "value": "100.69.32.1"
+        },
+        "startingIPAddress": {
+            "value": "100.69.32.21"
+        },
+        "endingIPAddress": {
+            "value": "100.69.32.27"
+        },
+        "dnsServers": {
+            "value": [
+                "100.71.45.125"
+            ]
+        },
+        "useDhcp": {
+            "value": false
+        },
+        "physicalNodesSettings": {
+            "value": [
+                {
+                    "name": "vhost1",
+                    "ipv4Address": "100.69.32.20"
+                }
+            ]
+        },
+        "networkingType": {
+            "value": "switchedMultiServerDeployment"
+        },
+        "networkingPattern": {
+            "value": "hyperConverged"
+        },
+        "intentList": {
+            "value": [
+                {
+                    "name": "Compute_Management_Storage",
+                    "trafficType": [
+                        "Management",
+                        "Compute",
+                        "Storage"
+                    ],
+                    "adapter": [
+                        "Ethernet",
+                        "Ethernet 2"
+                    ],
+                    "overrideVirtualSwitchConfiguration": false,
+                    "virtualSwitchConfigurationOverrides": {
+                        "enableIov": "",
+                        "loadBalancingAlgorithm": ""
+                    },
+                    "overrideQosPolicy": true,
+                    "qosPolicyOverrides": {
+                        "priorityValue8021Action_Cluster": "7",
+                        "priorityValue8021Action_SMB": "3",
+                        "bandwidthPercentage_SMB": "50"
+                    },
+                    "overrideAdapterProperty": true,
+                    "adapterPropertyOverrides": {
+                        "jumboPacket": "9014",
+                        "networkDirect": "Enabled",
+                        "networkDirectTechnology": "RoCEv2"
+                    }
+                }
+            ]
+        },
+        "storageNetworkList": {
+            "value": [
+                {
+                    "name": "StorageNetwork1",
+                    "networkAdapterName": "Ethernet",
+                    "vlanId": "711"
+                },
+                {
+                    "name": "StorageNetwork2",
+                    "networkAdapterName": "Ethernet 2",
+                    "vlanId": "712"
+                }
+            ]
+        },
+        "storageConnectivitySwitchless": {
+            "value": false
+        },
+        "enableStorageAutoIp": {
+            "value": true
+        },
+        "customLocation": {
+            "value": "mylocation"
+        },
+        "sbeVersion":{
+            "value": ""
+          },
+          "sbeFamily":{
+            "value": ""
+          },
+          "sbePublisher":{
+            "value": ""
+          },
+          "sbeManifestSource":{
+            "value": ""
+          },
+          "sbeManifestCreationDate":{
+            "value": ""
+          },
+          "partnerProperties": {
+            "value":[
+            ]
+          },
+        "partnerCredentiallist": {
+            "value": []
+          }
+    }
+}
