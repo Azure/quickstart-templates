@@ -122,27 +122,6 @@
         "description": "Deployment user password"
       }
     },
-    "arbDeploymentAppID": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "ARB SPN's AppID"
-      }
-    },
-    "arbDeploymentAppSecret": {
-      "type": "securestring",
-      "minLength": 1,
-      "metadata": {
-        "description": "ARB SPN's Password"
-      }
-    },
-    "arbDeploymentSPNObjectID": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "ARB SPN's ObjectID"
-      }
-    },
     "hciResourceProviderObjectID": {
       "type": "string",
       "minLength": 1,
@@ -489,11 +468,9 @@
     "storageWitnessECEName": "WitnessStorageKey",
     "LocalAdminCredentialECEName": "LocalAdminCredential",
     "domainAdminCredentialECEName": "AzureStackLCMUserCredential",
-    "arbDeploymentSpnCredentialECEName": "DefaultARBApplication",
     "storageWitnessSecretName": "[concat( parameters('clusterName'), '-', 'WitnessStorageKey')]",
     "LocalAdminCredentialSecretName": "[concat( parameters('clusterName'), '-', 'LocalAdminCredential')]",
     "domainAdminSecretName": "[concat( parameters('clusterName'), '-', 'AzureStackLCMUserCredential')]",
-    "arbDeploymentSpnSecretName": "[concat( parameters('clusterName'), '-', 'DefaultARBApplication')]",
     "storageWitnessNameVar": "WitnessStorageKey",
     "secretsLocationVar": "[concat('https://',parameters('keyVaultName'), '.vault.azure.net')]",
     "witnessTypeVar": "[if(equals(parameters('witnessType'), 'No Witness'), '','Cloud')]",
@@ -501,7 +478,6 @@
     "AzureServiceEndpointVar": "[if(equals(parameters('witnessType'), 'No Witness'), '', 'core.windows.net')]",
     "localAdminSecretValue": "[base64(concat(parameters('localAdminUserName'),':',parameters('localAdminPassword')))]",
     "domainAdminSecretValueVar": "[base64(concat(parameters('AzureStackLCMAdminUsername'),':',parameters('AzureStackLCMAdminPasssword')))]",
-    "arbDeploymentSpnValueVar": "[base64(concat(parameters('arbDeploymentAppID'),':',parameters('arbDeploymentAppSecret')))]",
     "CloudWithnessStorageAccountIdVar": "[resourceId('Microsoft.Storage/storageAccounts', parameters('clusterWitnessStorageAccountName'))]",
     "copy": [
       {
@@ -529,11 +505,6 @@
         "secretName":  "[variables('domainAdminSecretName')]",
         "eceSecretName" :  "[variables('domainAdminCredentialECEName')]",
         "secretLocation": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/secrets/', variables('domainAdminSecretName'))]"
-      },
-      {
-        "secretName":  "[variables('arbDeploymentSpnSecretName')]",
-        "eceSecretName" :  "[variables('arbDeploymentSpnCredentialECEName')]",
-        "secretLocation": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/secrets/', variables('arbDeploymentSpnSecretName'))]"
       }
 
     ]
@@ -552,43 +523,6 @@
       "properties": {
         "supportsHttpsTrafficOnly": true,
          "minimumTlsVersion": "TLS1_2"
-      }
-    },
-    "ARBSPNRoleAssignment":{
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('MOC-ARB-Role-Assignment',guid(concat('MOCARB-SPN-Subscription-Scope-Role-Assignment',resourceGroup().id,parameters('location'), parameters('arbDeploymentSPNObjectID'))))]",
-      "location": "[parameters('location')]",
-      "subscriptionId": "[subscription().subscriptionId]",
-      "properties": {
-        "mode": "Incremental",
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {
-            "arbDeploymentSPNObjectID1": {
-              "type": "string"
-            } 
-          },
-          "variables": {},
-          "resources": [
-            {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2022-04-01",
-              "name": "[guid(concat('ARB-', parameters('arbDeploymentSPNObjectID1')))]",
-              "properties": {
-                "mode": "Incremental",
-                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', '7b1f81f9-4196-4058-8aae-762e593270df')]",
-                "principalId": "[parameters('arbDeploymentSPNObjectID1')]"
-              }
-            }
-          ]
-        },
-        "parameters": {
-          "arbDeploymentSPNObjectID1": {
-            "value": "[parameters('arbDeploymentSPNObjectID')]"
-          }
-        }
       }
     },
     "hcirproleassignment": {
@@ -781,23 +715,6 @@
       "properties": {
         "contentType": "Secret",
         "value": "[variables('localAdminSecretValue')]",
-        "attributes": {
-          "enabled": true
-        }
-      }
-    },
-    "KVARBSPNSecret":{
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2021-06-01-preview",
-      "name": "[concat(parameters('keyVaultName'), '/', variables('arbDeploymentSpnSecretName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
-      ],
-      "location": "[parameters('location')]",
-      "scale": null,
-      "properties": {
-        "contentType": "Secret",
-        "value": "[variables('arbDeploymentSpnValueVar')]",
         "attributes": {
           "enabled": true
         }
